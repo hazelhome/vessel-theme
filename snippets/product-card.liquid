@@ -162,9 +162,9 @@
             >
               <span class="button__text">
                 {%- if product.variants.size == 1 -%}
-                  {{ 'products.product.add_to_cart' | t }}
+                  Agregar al carrito
                 {%- else -%}
-                  {{ 'products.product.quick_add' | t | default: 'Quick add' }}
+                  Agregar al carrito
                 {%- endif -%}
               </span>
               <div class="loading__spinner hidden">
@@ -178,9 +178,9 @@
             <a href="{{ variant_to_link.url }}" class="product-card__buy-button button button--primary">
               <span class="button__text">
                 {%- if product.variants.size == 1 -%}
-                  {{ 'products.product.add_to_cart' | t }}
+                  Agregar al carrito
                 {%- else -%}
-                  {{ 'products.product.choose_options' | t }}
+                  Agregar al carrito
                 {%- endif -%}
               </span>
             </a>
@@ -188,7 +188,7 @@
         {%- else -%}
           {%- comment -%} Producto agotado {%- endcomment -%}
           <button disabled class="product-card__buy-button button button--secondary" aria-disabled="true">
-            <span class="button__text">{{ 'products.product.sold_out' | t }}</span>
+            <span class="button__text">Agotado</span>
           </button>
         {%- endif -%}
       </div>

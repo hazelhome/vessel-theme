@@ -84,10 +84,11 @@ class ProductCardBuyButton {
     
     if (isLoading) {
       button.disabled = true;
-      if (buttonText) buttonText.textContent = 'Cargando...';
+      if (buttonText) buttonText.textContent = 'Agregando...';
       if (spinner) spinner.classList.remove('hidden');
     } else {
       button.disabled = false;
+      if (buttonText) buttonText.textContent = 'Agregar al carrito';
       if (spinner) spinner.classList.add('hidden');
     }
   }
@@ -96,7 +97,7 @@ class ProductCardBuyButton {
   listenToQuickAddEvents() {
     // Escuchar cuando se abre el modal de quick add
     document.addEventListener('quick-add:opened', (event) => {
-      console.log('Quick add modal abierto');
+      console.log('Modal de agregar al carrito abierto');
     });
 
     // Escuchar cuando se agrega un producto al carrito
