@@ -35,15 +35,6 @@
   {% endif %}
 
   <div class="slide__image-container">
-    {%- if block_settings.link != blank -%}
-      <a
-        href="{{ block_settings.link }}"
-        class="slide__link"
-        {% if block_settings.open_in_new_tab %}
-          target="_blank" rel="noopener"
-        {% endif %}
-      ></a>
-    {%- endif -%}
     {%- if block_settings.toggle_overlay -%}
       {% render 'overlay', settings: block_settings %}
     {%- endif -%}
@@ -70,6 +61,16 @@
           assign fetchpriority = 'high'
         endif
       -%}
+
+      {%- if block_settings.link != blank -%}
+        <a
+          href="{{ block_settings.link }}"
+          class="slide__image-link"
+          {% if block_settings.open_in_new_tab %}
+            target="_blank" rel="noopener"
+          {% endif %}
+        >
+      {%- endif -%}
 
       {%- if block_settings.media_type_1 == 'image' -%}
         {%- assign desktop_class = 'slide__image slide__image--desktop' -%}
@@ -145,6 +146,10 @@
         }}
       {%- endif -%}
     {%- endif -%}
+
+    {%- if block_settings.link != blank -%}
+      </a>
+    {%- endif -%}
   </div>
   <div
     class="spacing-style slide__content{% if block_settings.inherit_color_scheme == false %} color-{{ block_settings.color_scheme }}{% endif %}{% if preview_image or block_settings.toggle_overlay %} background-transparent{% endif %}"
@@ -180,7 +185,7 @@
   .slide__content {
     height: 100%;
     position: relative;
-    z-index: var(--layer-flat);
+    z-index: 2;
   }
 
   .slide__content > * {
@@ -218,10 +223,19 @@
     position: absolute;
   }
 
-  .slide__link {
+  .slide__image-link {
     position: absolute;
     inset: 0;
-    z-index: var(--layer-flat);
+    display: block;
+    z-index: 3;
+  }
+
+  .slide__image-link img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    position: relative;
   }
 
   /* Mobile/Desktop media visibility */
