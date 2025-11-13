@@ -48,4 +48,10 @@ Add alt text to product images containing variant names (e.g., "Red Shirt", "Blu
 
 ---
 
-Made with ❤️ for Hazel Home
+## 📞 Support
+
+For support and questions, contact the Hazel Home development team.
+
+---
+
+Made with ❤️ by Hazel Home
