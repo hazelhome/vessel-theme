@@ -151,26 +151,29 @@
     {%- unless onboarding -%}
       <div class="product-card__bottom-actions">
         {%- if product.available -%}
-          {%- comment -%} Botón de compra siempre visible {%- endcomment -%}
-          <button 
-            type="button" 
-            class="button quick-add__button quick-add__button--choose product-card__buy-button"
-            data-product-id="{{ product.id }}"
+          {%- comment -%} Botón de compra personalizado que usa el sistema de quick-add {%- endcomment -%}
+          <quick-add-component
             data-product-url="{{ product.url }}"
-            on:click="quick-add-component/handleClick"
-            aria-label="Agregar al carrito: {{ product.title | escape }}"
+            data-product-title="{{ product.title }}"
+            class="product-card__buy-button-wrapper"
           >
-            <span class="add-to-cart-text">
-              <span class="svg-wrapper add-to-cart-icon">
-                {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
+            <button 
+              type="button" 
+              class="button quick-add__button quick-add__button--choose product-card__buy-button"
+              on:click="quick-add-component/handleClick"
+              aria-label="Agregar al carrito: {{ product.title | escape }}"
+            >
+              <span class="add-to-cart-text">
+                <span class="add-to-cart-text__content">Agregar al carrito</span>
               </span>
-              <span class="add-to-cart-text__content">Agregar al carrito</span>
-            </span>
-          </button>
+            </button>
+          </quick-add-component>
         {%- else -%}
           {%- comment -%} Producto agotado {%- endcomment -%}
           <button disabled class="product-card__buy-button button button--secondary" aria-disabled="true">
-            <span class="button__text">Agotado</span>
+            <span class="add-to-cart-text">
+              <span class="add-to-cart-text__content">Agotado</span>
+            </span>
           </button>
         {%- endif -%}
       </div>
@@ -276,6 +279,11 @@
     z-index: 16;
   }
 
+  /* Wrapper del quick-add component */
+  .product-card__buy-button-wrapper {
+    width: 100%;
+  }
+
   /* Hacer que el botón siempre sea visible (no como los quick-add normales que son flotantes) */
   .product-card__buy-button.quick-add__button {
     position: static;
@@ -285,6 +293,8 @@
     background-color: var(--button-background-color);
     color: var(--button-color);
     border-color: var(--button-border-color);
+    border-radius: var(--style-border-radius-buttons-primary);
+    width: 100%;
   }
 
   .product-card__buy-button.quick-add__button:hover {
@@ -293,17 +303,25 @@
     --button-border-color: var(--color-primary-button-hover-border);
   }
 
-  /* Mostrar siempre el texto del botón */
+  /* Mostrar siempre el texto del botón sin icono */
   .product-card__buy-button .add-to-cart-text {
-    gap: var(--gap-2xs);
+    gap: 0;
     margin-inline: 0;
     padding-inline: 0;
+    justify-content: center;
   }
 
   .product-card__buy-button .add-to-cart-text__content {
     width: fit-content;
     opacity: 1;
     transform: translateX(0);
+    font-size: var(--font-paragraph--size);
+    line-height: var(--font-paragraph--line-height);
+  }
+
+  /* Ocultar el icono en nuestro botón personalizado */
+  .product-card__buy-button .add-to-cart-icon {
+    display: none;
   }
 
   /* Evitar que el hover de la galería afecte al botón */
