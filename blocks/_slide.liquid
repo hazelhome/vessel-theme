@@ -35,6 +35,15 @@
   {% endif %}
 
   <div class="slide__image-container">
+    {%- if block_settings.link != blank -%}
+      <a
+        href="{{ block_settings.link }}"
+        class="slide__link"
+        {% if block_settings.open_in_new_tab %}
+          target="_blank" rel="noopener"
+        {% endif %}
+      ></a>
+    {%- endif -%}
     {%- if block_settings.toggle_overlay -%}
       {% render 'overlay', settings: block_settings %}
     {%- endif -%}
@@ -209,6 +218,12 @@
     position: absolute;
   }
 
+  .slide__link {
+    position: absolute;
+    inset: 0;
+    z-index: var(--layer-flat);
+  }
+
   /* Mobile/Desktop media visibility */
   .slide__image--mobile,
   .slide__video--mobile,
@@ -316,6 +331,21 @@
       "id": "video_1_mobile",
       "label": "t:settings.video",
       "visible_if": "{{ block.settings.custom_mobile_media and block.settings.media_type_1_mobile == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.slide_link"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:settings.link"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "t:settings.open_new_tab",
+      "default": false
     },
     {
       "type": "header",
