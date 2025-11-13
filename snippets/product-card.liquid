@@ -151,40 +151,22 @@
     {%- unless onboarding -%}
       <div class="product-card__bottom-actions">
         {%- if product.available -%}
-          {%- if has_quick_add -%}
-            {%- comment -%} Usar el sistema de quick add existente {%- endcomment -%}
-            <button 
-              type="button" 
-              class="product-card__buy-button button button--primary quick-add__button"
-              data-product-id="{{ product.id }}"
-              data-product-url="{{ product.url }}"
-              aria-label="Agregar al carrito: {{ product.title | escape }}"
-            >
-              <span class="button__text">
-                {%- if product.variants.size == 1 -%}
-                  Agregar al carrito
-                {%- else -%}
-                  Agregar al carrito
-                {%- endif -%}
-              </span>
-              <div class="loading__spinner hidden">
-                <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-                  <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-                </svg>
-              </div>
-            </button>
-          {%- else -%}
-            {%- comment -%} Fallback para productos sin quick add {%- endcomment -%}
-            <a href="{{ variant_to_link.url }}" class="product-card__buy-button button button--primary">
-              <span class="button__text">
-                {%- if product.variants.size == 1 -%}
-                  Agregar al carrito
-                {%- else -%}
-                  Agregar al carrito
-                {%- endif -%}
-              </span>
-            </a>
-          {%- endif -%}
+          {%- comment -%} Botón de compra siempre visible {%- endcomment -%}
+          <button 
+            type="button" 
+            class="product-card__buy-button button button--primary quick-add__button"
+            data-product-id="{{ product.id }}"
+            data-product-url="{{ product.url }}"
+            data-has-quick-add="{{ has_quick_add }}"
+            aria-label="Agregar al carrito: {{ product.title | escape }}"
+          >
+            <span class="button__text">Agregar al carrito</span>
+            <div class="loading__spinner hidden">
+              <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+              </svg>
+            </div>
+          </button>
         {%- else -%}
           {%- comment -%} Producto agotado {%- endcomment -%}
           <button disabled class="product-card__buy-button button button--secondary" aria-disabled="true">
@@ -280,6 +262,9 @@
     position: relative;
     z-index: 10;
     pointer-events: auto;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Evitar que el botón se vea afectado por hover de la tarjeta */
@@ -289,16 +274,16 @@
   }
 
   .product-card__buy-button {
-    width: 100%;
-    min-height: 44px;
-    display: flex;
+    width: 100% !important;
+    min-height: 44px !important;
+    display: flex !important;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-xs);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius);
-    background: var(--color-background);
-    color: var(--color-foreground);
+    background: var(--color-background) !important;
+    color: var(--color-foreground) !important;
     text-decoration: none;
     font-size: var(--font-size-body);
     font-weight: var(--font-weight-medium);
@@ -306,6 +291,8 @@
     cursor: pointer;
     position: relative;
     z-index: 15;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   /* Evitar que el hover de la galería afecte al botón */

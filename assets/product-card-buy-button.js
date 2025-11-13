@@ -5,11 +5,26 @@ class ProductCardBuyButton {
   }
 
   init() {
+    console.log('🚀 Inicializando ProductCardBuyButton...');
+    
     // Buscar todos los botones de compra en la parte inferior
     const buyButtons = document.querySelectorAll('.product-card__buy-button.quick-add__button');
+    console.log(`📍 Encontrados ${buyButtons.length} botones de compra`);
     
-    buyButtons.forEach(button => {
+    buyButtons.forEach((button, index) => {
+      console.log(`🔘 Configurando botón ${index + 1}:`, button);
       button.addEventListener('click', (e) => this.handleQuickAddClick(e));
+    });
+
+    // También buscar botones sin la clase quick-add__button por si acaso
+    const allBuyButtons = document.querySelectorAll('.product-card__buy-button');
+    console.log(`📍 Total de botones encontrados: ${allBuyButtons.length}`);
+    
+    allBuyButtons.forEach((button, index) => {
+      if (!button.classList.contains('quick-add__button')) {
+        console.log(`🔘 Configurando botón adicional ${index + 1}:`, button);
+        button.addEventListener('click', (e) => this.handleQuickAddClick(e));
+      }
     });
   }
 
