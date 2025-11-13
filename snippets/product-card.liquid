@@ -159,21 +159,17 @@
           >
             <button 
               type="button" 
-              class="button quick-add__button quick-add__button--choose product-card__buy-button"
+              class="button product-card__buy-button primary_button"
               on:click="quick-add-component/handleClick"
-              aria-label="Agregar al carrito: {{ product.title | escape }}"
+              aria-label="{{ 'products.product.add_to_cart' | t }}: {{ product.title | escape }}"
             >
-              <span class="add-to-cart-text">
-                <span class="add-to-cart-text__content">Agregar al carrito</span>
-              </span>
+              <span class="button__text">{{ 'products.product.add_to_cart' | t }}</span>
             </button>
           </quick-add-component>
         {%- else -%}
           {%- comment -%} Producto agotado {%- endcomment -%}
           <button disabled class="product-card__buy-button button button--secondary" aria-disabled="true">
-            <span class="add-to-cart-text">
-              <span class="add-to-cart-text__content">Agotado</span>
-            </span>
+            <span class="button__text">{{ 'products.product.sold_out' | t }}</span>
           </button>
         {%- endif -%}
       </div>
@@ -284,44 +280,10 @@
     width: 100%;
   }
 
-  /* Hacer que el botón siempre sea visible (no como los quick-add normales que son flotantes) */
-  .product-card__buy-button.quick-add__button {
-    position: static;
-    display: grid;
-    pointer-events: all;
-    box-shadow: inset 0 0 0 var(--button-border-width) var(--button-border-color);
-    background-color: var(--button-background-color);
-    color: var(--button-color);
-    border-color: var(--button-border-color);
-    border-radius: var(--style-border-radius-buttons-primary);
+  /* Botón de compra como botón primario estándar */
+  .product-card__buy-button.button {
     width: 100%;
-  }
-
-  .product-card__buy-button.quick-add__button:hover {
-    --button-color: var(--color-primary-button-hover-text);
-    --button-background-color: var(--color-primary-button-hover-background);
-    --button-border-color: var(--color-primary-button-hover-border);
-  }
-
-  /* Mostrar siempre el texto del botón sin icono */
-  .product-card__buy-button .add-to-cart-text {
-    gap: 0;
-    margin-inline: 0;
-    padding-inline: 0;
-    justify-content: center;
-  }
-
-  .product-card__buy-button .add-to-cart-text__content {
-    width: fit-content;
-    opacity: 1;
-    transform: translateX(0);
-    font-size: var(--font-paragraph--size);
-    line-height: var(--font-paragraph--line-height);
-  }
-
-  /* Ocultar el icono en nuestro botón personalizado */
-  .product-card__buy-button .add-to-cart-icon {
-    display: none;
+    text-align: center;
   }
 
   /* Evitar que el hover de la galería afecte al botón */
