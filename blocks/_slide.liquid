@@ -180,7 +180,12 @@
   .slide__content {
     height: 100%;
     position: relative;
-    z-index: var(--layer-flat);
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  .slide__content * {
+    pointer-events: auto;
   }
 
   .slide__content > * {
@@ -221,7 +226,8 @@
   .slide__link {
     position: absolute;
     inset: 0;
-    z-index: var(--layer-flat);
+    z-index: 10;
+    display: block;
   }
 
   /* Mobile/Desktop media visibility */
