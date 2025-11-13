@@ -154,18 +154,18 @@
           {%- comment -%} Botón de compra siempre visible {%- endcomment -%}
           <button 
             type="button" 
-            class="product-card__buy-button button button--primary quick-add__button"
+            class="button quick-add__button quick-add__button--choose product-card__buy-button"
             data-product-id="{{ product.id }}"
             data-product-url="{{ product.url }}"
-            data-has-quick-add="{{ has_quick_add }}"
+            on:click="quick-add-component/handleClick"
             aria-label="Agregar al carrito: {{ product.title | escape }}"
           >
-            <span class="button__text">Agregar al carrito</span>
-            <div class="loading__spinner hidden">
-              <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
-                <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
-              </svg>
-            </div>
+            <span class="add-to-cart-text">
+              <span class="svg-wrapper add-to-cart-icon">
+                {{- 'icon-add-to-cart.svg' | inline_asset_content -}}
+              </span>
+              <span class="add-to-cart-text__content">Agregar al carrito</span>
+            </span>
           </button>
         {%- else -%}
           {%- comment -%} Producto agotado {%- endcomment -%}
@@ -258,65 +258,63 @@
   /* Estilos para el botón de compra en la parte inferior */
   .product-card__bottom-actions {
     margin-top: auto;
-    padding-top: var(--spacing-xs);
+    padding-top: var(--gap-xs);
     position: relative;
-    z-index: 10;
+    z-index: 15;
     pointer-events: auto;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+    display: block;
   }
 
-  /* Evitar que el botón se vea afectado por hover de la tarjeta */
+  /* Botón de compra personalizado */
+  .product-card__buy-button {
+    width: 100%;
+    justify-content: center;
+    border-radius: var(--style-border-radius-buttons-primary);
+    padding: var(--button-padding-block) var(--button-padding-inline);
+    min-height: var(--minimum-touch-target);
+    position: relative;
+    z-index: 16;
+  }
+
+  /* Hacer que el botón siempre sea visible (no como los quick-add normales que son flotantes) */
+  .product-card__buy-button.quick-add__button {
+    position: static;
+    display: grid;
+    pointer-events: all;
+    box-shadow: inset 0 0 0 var(--button-border-width) var(--button-border-color);
+    background-color: var(--button-background-color);
+    color: var(--button-color);
+    border-color: var(--button-border-color);
+  }
+
+  .product-card__buy-button.quick-add__button:hover {
+    --button-color: var(--color-primary-button-hover-text);
+    --button-background-color: var(--color-primary-button-hover-background);
+    --button-border-color: var(--color-primary-button-hover-border);
+  }
+
+  /* Mostrar siempre el texto del botón */
+  .product-card__buy-button .add-to-cart-text {
+    gap: var(--gap-2xs);
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .product-card__buy-button .add-to-cart-text__content {
+    width: fit-content;
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Evitar que el hover de la galería afecte al botón */
   .product-card:hover .product-card__bottom-actions {
     transform: none !important;
     transition: none !important;
   }
 
-  .product-card__buy-button {
-    width: 100% !important;
-    min-height: 44px !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-xs);
-    border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
-    background: var(--color-background) !important;
-    color: var(--color-foreground) !important;
-    text-decoration: none;
-    font-size: var(--font-size-body);
-    font-weight: var(--font-weight-medium);
-    transition: all 0.2s ease;
-    cursor: pointer;
-    position: relative;
-    z-index: 15;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
-
-  /* Evitar que el hover de la galería afecte al botón */
-  .product-card .card-gallery:hover ~ * .product-card__buy-button,
-  .product-card:hover .product-card__buy-button {
-    transform: none !important;
-    scale: 1 !important;
-  }
-
-  .product-card__buy-button:hover {
-    background: var(--color-foreground);
-    color: var(--color-background);
-    border-color: var(--color-foreground);
-  }
-
   .product-card__buy-button:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
-  }
-
-  .product-card__buy-button:disabled:hover {
-    background: var(--color-background);
-    color: var(--color-foreground);
-    border-color: var(--color-border);
   }
 
   .product-card__buy-form {
