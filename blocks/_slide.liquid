@@ -35,15 +35,6 @@
   {% endif %}
 
   <div class="slide__image-container">
-    {%- if block_settings.link != blank -%}
-      <a
-        href="{{ block_settings.link }}"
-        class="slide__link"
-        {% if block_settings.open_in_new_tab %}
-          target="_blank" rel="noopener"
-        {% endif %}
-      ></a>
-    {%- endif -%}
     {%- if block_settings.toggle_overlay -%}
       {% render 'overlay', settings: block_settings %}
     {%- endif -%}
@@ -144,6 +135,17 @@
           | video_tag: poster: nil, autoplay: true, loop: true, controls: false, muted: true, class: 'slide__video slide__video--mobile'
         }}
       {%- endif -%}
+    {%- endif -%}
+    
+    {%- comment -%} Slide Link {%- endcomment -%}
+    {%- if block_settings.link != blank -%}
+      <a
+        href="{{ block_settings.link }}"
+        class="slide__link"
+        {% if block_settings.open_in_new_tab %}
+          target="_blank" rel="noopener"
+        {% endif %}
+      ></a>
     {%- endif -%}
   </div>
   <div
