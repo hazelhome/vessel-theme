@@ -155,10 +155,10 @@
             {%- comment -%} Usar el sistema de quick add existente {%- endcomment -%}
             <button 
               type="button" 
-              class="product-card__buy-button button button--primary"
-              data-quick-add-trigger
+              class="product-card__buy-button button button--primary quick-add__button"
               data-product-id="{{ product.id }}"
-              aria-label="{{ 'products.product.add_to_cart' | t }}: {{ product.title | escape }}"
+              data-product-url="{{ product.url }}"
+              aria-label="Agregar al carrito: {{ product.title | escape }}"
             >
               <span class="button__text">
                 {%- if product.variants.size == 1 -%}
@@ -277,6 +277,15 @@
   .product-card__bottom-actions {
     margin-top: auto;
     padding-top: var(--spacing-xs);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  /* Evitar que el botón se vea afectado por hover de la tarjeta */
+  .product-card:hover .product-card__bottom-actions {
+    transform: none !important;
+    transition: none !important;
   }
 
   .product-card__buy-button {
@@ -295,6 +304,15 @@
     font-weight: var(--font-weight-medium);
     transition: all 0.2s ease;
     cursor: pointer;
+    position: relative;
+    z-index: 15;
+  }
+
+  /* Evitar que el hover de la galería afecte al botón */
+  .product-card .card-gallery:hover ~ * .product-card__buy-button,
+  .product-card:hover .product-card__buy-button {
+    transform: none !important;
+    scale: 1 !important;
   }
 
   .product-card__buy-button:hover {

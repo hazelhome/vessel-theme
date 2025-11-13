@@ -5,19 +5,21 @@ class ProductCardBuyButton {
   }
 
   init() {
-    // Buscar todos los botones de quick add en la parte inferior
-    const quickAddButtons = document.querySelectorAll('[data-quick-add-trigger]');
+    // Buscar todos los botones de compra en la parte inferior
+    const buyButtons = document.querySelectorAll('.product-card__buy-button.quick-add__button');
     
-    quickAddButtons.forEach(button => {
+    buyButtons.forEach(button => {
       button.addEventListener('click', (e) => this.handleQuickAddClick(e));
     });
   }
 
   handleQuickAddClick(event) {
     event.preventDefault();
+    event.stopPropagation();
     
     const button = event.currentTarget;
     const productId = button.getAttribute('data-product-id');
+    const productUrl = button.getAttribute('data-product-url');
     const productCard = button.closest('product-card');
     
     if (!productCard) {
@@ -25,16 +27,39 @@ class ProductCardBuyButton {
       return;
     }
 
-    // Buscar el botón de quick add original en la tarjeta
-    const originalQuickAddButton = productCard.querySelector('.quick-add button, [data-quick-add]');
+    console.log('🛒 Intentando abrir quick add para producto:', productId);
+
+    // Buscar el botón de quick add original en diferentes ubicaciones
+    const quickAddSelectors = [
+      '.quick-add button',
+      '.quick-add__button',
+      '[data-quick-add]',
+      'quick-add button',
+      '.card-gallery .quick-add button'
+    ];
+
+    let quickAddButton = null;
     
-    if (originalQuickAddButton) {
+    for (const selector of quickAddSelectors) {
+      quickAddButton = productCard.querySelector(selector);
+      if (quickAddButton) {
+        console.log('✅ Encontrado quick add con selector:', selector);
+        break;
+      }
+    }
+    
+    if (quickAddButton && !quickAddButton.disabled) {
       // Simular click en el botón de quick add original
-      console.log('Activando quick add original...');
-      originalQuickAddButton.click();
+      console.log('🎯 Activando quick add original...');
+      quickAddButton.click();
     } else {
-      // Fallback: buscar otros posibles selectores de quick add
-      this.tryAlternativeQuickAdd(productCard, productId);
+      console.log('⚠️ No se encontró quick add, usando fallback...');
+      // Fallback: redirigir a la página del producto
+      if (productUrl) {
+        window.location.href = productUrl;
+      } else {
+        this.tryAlternativeQuickAdd(productCard, productId);
+      }
     }
   }
 
