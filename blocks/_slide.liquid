@@ -62,32 +62,26 @@
         endif
       -%}
 
+      {%- if block_settings.link != blank -%}
+        <a
+          href="{{ block_settings.link }}"
+          class="slide__image-link"
+          {% if block_settings.open_in_new_tab %}
+            target="_blank" rel="noopener"
+          {% endif %}
+        >
+      {%- endif -%}
+
       {%- if block_settings.media_type_1 == 'image' -%}
         {%- assign desktop_class = 'slide__image slide__image--desktop' -%}
         {%- if has_mobile_media == false -%}
           {%- assign desktop_class = desktop_class | append: ' slide__image--mobile' -%}
         {%- endif -%}
-        {%- if block_settings.link != blank -%}
-          <a
-            href="{{ block_settings.link }}"
-            class="slide__image-link"
-            {% if block_settings.open_in_new_tab %}
-              target="_blank" rel="noopener"
-            {% endif %}
-          >
-            {{
-              block_settings.image_1
-              | image_url: width: 3840
-              | image_tag: height: height, sizes: sizes, widths: widths, class: desktop_class, loading: loading, fetchpriority: fetchpriority
-            }}
-          </a>
-        {%- else -%}
-          {{
-            block_settings.image_1
-            | image_url: width: 3840
-            | image_tag: height: height, sizes: sizes, widths: widths, class: desktop_class, loading: loading, fetchpriority: fetchpriority
-          }}
-        {%- endif -%}
+        {{
+          block_settings.image_1
+          | image_url: width: 3840
+          | image_tag: height: height, sizes: sizes, widths: widths, class: desktop_class, loading: loading, fetchpriority: fetchpriority
+        }}
       {%- else -%}
         {%- if block_settings.video_1.preview_image -%}
           {%- assign desktop_video_class = 'slide__video-poster slide__video-poster--desktop' -%}
@@ -127,27 +121,11 @@
     {%- comment -%} Mobile Media {%- endcomment -%}
     {%- if has_mobile_media -%}
       {%- if block_settings.media_type_1_mobile == 'image' -%}
-        {%- if block_settings.link != blank -%}
-          <a
-            href="{{ block_settings.link }}"
-            class="slide__image-link"
-            {% if block_settings.open_in_new_tab %}
-              target="_blank" rel="noopener"
-            {% endif %}
-          >
-            {{
-              block_settings.image_1_mobile
-              | image_url: width: 1600
-              | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image slide__image--mobile', loading: loading, fetchpriority: fetchpriority
-            }}
-          </a>
-        {%- else -%}
-          {{
-            block_settings.image_1_mobile
-            | image_url: width: 1600
-            | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image slide__image--mobile', loading: loading, fetchpriority: fetchpriority
-          }}
-        {%- endif -%}
+        {{
+          block_settings.image_1_mobile
+          | image_url: width: 1600
+          | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image slide__image--mobile', loading: loading, fetchpriority: fetchpriority
+        }}
       {%- else -%}
         {%- if block_settings.video_1_mobile.preview_image -%}
           {{
@@ -167,6 +145,10 @@
           | video_tag: poster: nil, autoplay: true, loop: true, controls: false, muted: true, class: 'slide__video slide__video--mobile'
         }}
       {%- endif -%}
+    {%- endif -%}
+
+    {%- if block_settings.link != blank -%}
+      </a>
     {%- endif -%}
   </div>
   <div
@@ -203,7 +185,7 @@
   .slide__content {
     height: 100%;
     position: relative;
-    z-index: var(--layer-flat);
+    z-index: 2;
   }
 
   .slide__content > * {
@@ -242,9 +224,10 @@
   }
 
   .slide__image-link {
+    position: absolute;
+    inset: 0;
     display: block;
-    width: 100%;
-    height: 100%;
+    z-index: 1;
   }
 
   .slide__image-link img {
@@ -252,6 +235,7 @@
     height: 100%;
     object-fit: cover;
     object-position: center center;
+    position: relative;
   }
 
   /* Mobile/Desktop media visibility */
