@@ -56,6 +56,8 @@
             "custom_mobile_media": true,
             "media_type_1_mobile": "image",
             "image_1_mobile": "shopify://shop_images/banner_mobile.jpg",
+            "link": "shopify://collections/all",
+            "open_in_new_tab": false,
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
