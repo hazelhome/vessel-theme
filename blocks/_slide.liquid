@@ -7,8 +7,18 @@
 {% capture children %}
   {% liquid
     assign preview_image = block_settings.image_1
+    assign preview_image_mobile = block_settings.image_1_mobile
+    assign has_mobile_media = false
+    
     if block_settings.media_type_1 == 'video'
       assign preview_image = block_settings.video_1.preview_image
+    endif
+    
+    if block_settings.custom_mobile_media and block_settings.image_1_mobile != blank
+      assign has_mobile_media = true
+      if block_settings.media_type_1_mobile == 'video'
+        assign preview_image_mobile = block_settings.video_1_mobile.preview_image
+      endif
     endif
   %}
   {% if section.settings.slide_height == 'adapt_image' and block_index == 0 and preview_image != blank %}
@@ -53,14 +63,21 @@
       -%}
 
       {%- if block_settings.media_type_1 == 'image' -%}
+        {%- assign desktop_class = 'slide__image slide__image--desktop' -%}
+        {%- if has_mobile_media == false -%}
+          {%- assign desktop_class = desktop_class | append: ' slide__image--mobile' -%}
+        {%- endif -%}
         {{
           block_settings.image_1
           | image_url: width: 3840
-          | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image', loading: loading, fetchpriority: fetchpriority
+          | image_tag: height: height, sizes: sizes, widths: widths, class: desktop_class, loading: loading, fetchpriority: fetchpriority
         }}
       {%- else -%}
         {%- if block_settings.video_1.preview_image -%}
-
+          {%- assign desktop_video_class = 'slide__video-poster slide__video-poster--desktop' -%}
+          {%- if has_mobile_media == false -%}
+            {%- assign desktop_video_class = desktop_video_class | append: ' slide__video-poster--mobile' -%}
+          {%- endif -%}
           {{
             block_settings.video_1.preview_image
             | image_url: width: 3840
@@ -69,13 +86,17 @@
               sizes: sizes,
               widths: widths,
               loading: loading,
-              class: 'slide__video-poster',
+              class: desktop_video_class,
               fetchpriority: fetchpriority
           }}
         {%- endif -%}
+        {%- assign desktop_video_class = 'slide__video slide__video--desktop' -%}
+        {%- if has_mobile_media == false -%}
+          {%- assign desktop_video_class = desktop_video_class | append: ' slide__video--mobile' -%}
+        {%- endif -%}
         {{
           block_settings.video_1
-          | video_tag: poster: nil, autoplay: true, loop: true, controls: false, muted: true, class: 'slide__video'
+          | video_tag: poster: nil, autoplay: true, loop: true, controls: false, muted: true, class: desktop_video_class
         }}
       {%- endif -%}
     {%- else -%}
@@ -84,7 +105,36 @@
         assign placeholder_variant = 2 | minus: modulo_result
         assign placeholder_name = 'hero-apparel-' | append: placeholder_variant
       -%}
-      {{ placeholder_name | placeholder_svg_tag: 'slide__image' }}
+      {{ placeholder_name | placeholder_svg_tag: 'slide__image slide__image--desktop slide__image--mobile' }}
+    {%- endif -%}
+    
+    {%- comment -%} Mobile Media {%- endcomment -%}
+    {%- if has_mobile_media -%}
+      {%- if block_settings.media_type_1_mobile == 'image' -%}
+        {{
+          block_settings.image_1_mobile
+          | image_url: width: 1600
+          | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image slide__image--mobile', loading: loading, fetchpriority: fetchpriority
+        }}
+      {%- else -%}
+        {%- if block_settings.video_1_mobile.preview_image -%}
+          {{
+            block_settings.video_1_mobile.preview_image
+            | image_url: width: 1600
+            | image_tag:
+              height: height,
+              sizes: sizes,
+              widths: widths,
+              loading: loading,
+              class: 'slide__video-poster slide__video-poster--mobile',
+              fetchpriority: fetchpriority
+          }}
+        {%- endif -%}
+        {{
+          block_settings.video_1_mobile
+          | video_tag: poster: nil, autoplay: true, loop: true, controls: false, muted: true, class: 'slide__video slide__video--mobile'
+        }}
+      {%- endif -%}
     {%- endif -%}
   </div>
   <div
@@ -158,6 +208,33 @@
   .slide__image-container > .slide__video-poster {
     position: absolute;
   }
+
+  /* Mobile/Desktop media visibility */
+  .slide__image--mobile,
+  .slide__video--mobile,
+  .slide__video-poster--mobile {
+    display: none;
+  }
+
+  .slide__image--desktop,
+  .slide__video--desktop,
+  .slide__video-poster--desktop {
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .slide__image--desktop,
+    .slide__video--desktop,
+    .slide__video-poster--desktop {
+      display: none;
+    }
+
+    .slide__image--mobile,
+    .slide__video--mobile,
+    .slide__video-poster--mobile {
+      display: block;
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}
@@ -200,6 +277,45 @@
       "id": "video_1",
       "label": "t:settings.video",
       "visible_if": "{{ block.settings.media_type_1 == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "t:content.mobile_media"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_mobile_media",
+      "label": "t:settings.custom_mobile_media",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "media_type_1_mobile",
+      "label": "t:settings.media_type_1",
+      "options": [
+        {
+          "value": "image",
+          "label": "t:options.image"
+        },
+        {
+          "value": "video",
+          "label": "t:options.video"
+        }
+      ],
+      "default": "image",
+      "visible_if": "{{ block.settings.custom_mobile_media }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1_mobile",
+      "label": "t:settings.image",
+      "visible_if": "{{ block.settings.custom_mobile_media and block.settings.media_type_1_mobile == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "video_1_mobile",
+      "label": "t:settings.video",
+      "visible_if": "{{ block.settings.custom_mobile_media and block.settings.media_type_1_mobile == 'video' }}"
     },
     {
       "type": "header",
