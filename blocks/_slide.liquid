@@ -75,14 +75,18 @@
               target="_blank" rel="noopener"
             {% endif %}
           >
-        {%- endif -%}
-        {{
-          block_settings.image_1
-          | image_url: width: 3840
-          | image_tag: height: height, sizes: sizes, widths: widths, class: desktop_class, loading: loading, fetchpriority: fetchpriority
-        }}
-        {%- if block_settings.link != blank -%}
+            {{
+              block_settings.image_1
+              | image_url: width: 3840
+              | image_tag: height: height, sizes: sizes, widths: widths, class: desktop_class, loading: loading, fetchpriority: fetchpriority
+            }}
           </a>
+        {%- else -%}
+          {{
+            block_settings.image_1
+            | image_url: width: 3840
+            | image_tag: height: height, sizes: sizes, widths: widths, class: desktop_class, loading: loading, fetchpriority: fetchpriority
+          }}
         {%- endif -%}
       {%- else -%}
         {%- if block_settings.video_1.preview_image -%}
@@ -131,14 +135,18 @@
               target="_blank" rel="noopener"
             {% endif %}
           >
-        {%- endif -%}
-        {{
-          block_settings.image_1_mobile
-          | image_url: width: 1600
-          | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image slide__image--mobile', loading: loading, fetchpriority: fetchpriority
-        }}
-        {%- if block_settings.link != blank -%}
+            {{
+              block_settings.image_1_mobile
+              | image_url: width: 1600
+              | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image slide__image--mobile', loading: loading, fetchpriority: fetchpriority
+            }}
           </a>
+        {%- else -%}
+          {{
+            block_settings.image_1_mobile
+            | image_url: width: 1600
+            | image_tag: height: height, sizes: sizes, widths: widths, class: 'slide__image slide__image--mobile', loading: loading, fetchpriority: fetchpriority
+          }}
         {%- endif -%}
       {%- else -%}
         {%- if block_settings.video_1_mobile.preview_image -%}
