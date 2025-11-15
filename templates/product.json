@@ -271,11 +271,25 @@
                   },
                   "blocks": {}
                 },
+                "product_stories_GYmnmp": {
+                  "type": "product-stories",
+                  "name": "Historias / Stories",
+                  "settings": {
+                    "enable_stories": true,
+                    "use_product_videos": true,
+                    "alignment": "flex-start",
+                    "padding_top": 16,
+                    "padding_bottom": 16,
+                    "padding_left": 0,
+                    "padding_right": 0
+                  },
+                  "blocks": {}
+                },
                 "product_description_8gHdXj": {
                   "type": "product-description",
                   "name": "Product description",
                   "settings": {
-                    "text": "<p>{{ closest.product.description }}</p>",
+                    "text": "{{ closest.product.description }}",
                     "width": "100%",
                     "max_width": "normal",
                     "alignment": "left",
@@ -452,6 +466,7 @@
               "block_order": [
                 "group_xr9GGL",
                 "divider_grFKCP",
+                "product_stories_GYmnmp",
                 "product_description_8gHdXj",
                 "variant_picker_nhbWcG",
                 "buy_buttons_B7HMzq",
