@@ -91,13 +91,28 @@
         continue
       endif
 
+      if block_settings.hide_videos and media.media_type == 'video' or block_settings.hide_videos and media.media_type == 'external_video'
+        continue
+      endif
+
       if media.id != selected_variant_media.id
         assign found_media = selected_product.media | where: 'id', media.id
         assign sorted_media = sorted_media | concat: found_media
       endif
     endfor
   else
-    assign sorted_media = selected_product.media
+    if block_settings.hide_videos
+      assign sorted_media = '' | split: ','
+      for media in selected_product.media
+        if media.media_type == 'video' or media.media_type == 'external_video'
+          continue
+        endif
+        assign found_media = selected_product.media | where: 'id', media.id
+        assign sorted_media = sorted_media | concat: found_media
+      endfor
+    else
+      assign sorted_media = selected_product.media
+    endif
   endif
   assign has_image_drop = sorted_media | has: 'media_type', 'image'
 
@@ -944,6 +959,12 @@
       "id": "hide_variants",
       "default": false,
       "label": "t:settings.hide_unselected_variant_media"
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_videos",
+      "default": false,
+      "label": "Ocultar videos de la galería"
     },
     {
       "type": "header",

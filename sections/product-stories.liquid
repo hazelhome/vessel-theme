@@ -1,0 +1,606 @@
+{% liquid
+  assign all_videos = '' | split: ','
+  
+  if section.settings.video_source == 'product'
+    assign videos = product.media | where: "media_type", "video"
+    assign external_videos = product.media | where: "media_type", "external_video"
+    assign all_videos = videos | concat: external_videos
+  elsif section.settings.video_source == 'custom'
+    assign all_videos = section.blocks
+  endif
+%}
+
+{% if section.settings.enable_stories and all_videos.size > 0 %}
+  <div
+    class="product-stories"
+    data-product-stories
+    style="padding-block-start: {{ section.settings.padding_top }}px; padding-block-end: {{ section.settings.padding_bottom }}px; padding-inline-start: {{ section.settings.padding_left }}px; padding-inline-end: {{ section.settings.padding_right }}px;"
+  >
+    <div class="product-stories__circles" style="justify-content: {{ section.settings.alignment }};">
+      {% for item in all_videos %}
+        {% liquid
+          if section.settings.video_source == 'custom'
+            assign video_file = item.settings.video
+            assign video_preview = item.settings.preview_image
+          else
+            assign video_file = item
+            assign video_preview = item.preview_image
+          endif
+        %}
+        
+        <button
+          class="product-stories__circle"
+          data-story-trigger="{{ forloop.index0 }}"
+          aria-label="Ver video {{ forloop.index }}"
+        >
+          <div class="product-stories__circle-border">
+            <div class="product-stories__circle-inner">
+              {% if video_preview %}
+                {{
+                  video_preview
+                  | image_url: width: 200
+                  | image_tag: alt: '', class: 'product-stories__circle-image'
+                }}
+              {% else %}
+                <div class="product-stories__circle-placeholder">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                  </svg>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </button>
+      {% endfor %}
+    </div>
+
+    <div class="product-stories__modal" data-stories-modal>
+      <div class="product-stories__modal-overlay" data-close-modal></div>
+      
+      <div class="product-stories__container">
+        <button class="product-stories__close" data-close-modal aria-label="Cerrar">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <div class="product-stories__progress">
+          {% for item in all_videos %}
+            <div class="product-stories__progress-bar" data-story-index="{{ forloop.index0 }}">
+              <div class="product-stories__progress-fill"></div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="product-stories__viewer">
+          {% for item in all_videos %}
+            {% liquid
+              if section.settings.video_source == 'custom'
+                assign video_file = item.settings.video
+              else
+                assign video_file = item
+              endif
+            %}
+            
+            <div
+              class="product-stories__story {% if forloop.first %}active{% endif %}"
+              data-story-index="{{ forloop.index0 }}"
+            >
+              {% if video_file %}
+                {% render 'video',
+                  video: video_file,
+                  video_autoplay: false,
+                  video_loop: false,
+                  disable_controls: true,
+                  section_id: section.id
+                %}
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          {% if all_videos.size > 1 %}
+            <button
+              class="product-stories__nav product-stories__nav--prev"
+              data-story-nav="prev"
+              aria-label="Anterior"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            <button
+              class="product-stories__nav product-stories__nav--next"
+              data-story-nav="next"
+              aria-label="Siguiente"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          {% endif %}
+
+          <button
+            class="product-stories__play-pause"
+            data-story-toggle
+            aria-label="Play/Pause"
+          >
+            <svg class="icon-play" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <svg class="icon-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ 'product-stories.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% stylesheet %}
+  .product-stories {
+    width: 100%;
+  }
+
+  /* Círculos de historias estilo Instagram */
+  .product-stories__circles {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .product-stories__circles::-webkit-scrollbar {
+    display: none;
+  }
+
+  .product-stories__circle {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .product-stories__circle:hover {
+    transform: scale(1.05);
+  }
+
+  .product-stories__circle-border {
+    padding: 2px;
+    background: linear-gradient(45deg, 
+      #feda75 0%, 
+      #fa7e1e 15%, 
+      #d62976 30%, 
+      #962fbf 50%, 
+      #4f5bd5 100%
+    );
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-stories__circle-inner {
+    position: relative;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    background: white;
+    border-radius: 50%;
+    padding: 2px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-stories__circle-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .product-stories__circle-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+  }
+
+  /* Modal de historias - debe estar por encima de todo */
+  body:has(.product-stories__modal.active) #header-group,
+  body:has(.product-stories__modal.active) #header-component {
+    z-index: 1 !important;
+  }
+
+  .product-stories__modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-stories__modal.active {
+    display: flex !important;
+  }
+
+  .product-stories__modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .product-stories__container {
+    position: relative;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    aspect-ratio: 9 / 16;
+    max-width: 500px;
+    max-height: 90vh;
+    width: 100%;
+    z-index: 10;
+  }
+
+  .product-stories__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: background 0.2s ease;
+  }
+
+  .product-stories__close:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .product-stories__progress {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    gap: 4px;
+    z-index: 10;
+  }
+
+  .product-stories__progress-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .product-stories__progress-fill {
+    height: 100%;
+    width: 0%;
+    background: rgba(255, 255, 255, 0.9);
+    transition: width 0.1s linear;
+  }
+
+  .product-stories__progress-bar.active .product-stories__progress-fill {
+    animation: progress-fill var(--story-duration, 5s) linear forwards;
+  }
+
+  .product-stories__progress-bar.completed .product-stories__progress-fill {
+    width: 100%;
+  }
+
+  @keyframes progress-fill {
+    from {
+      width: 0%;
+    }
+    to {
+      width: 100%;
+    }
+  }
+
+  .product-stories__viewer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-stories__story {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-stories__story.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+  }
+
+  .product-stories__story deferred-media {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: relative;
+  }
+
+  .product-stories__story video,
+  .product-stories__story iframe {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  /* Ocultar el botón de play del deferred-media */
+  .product-stories__story .deferred-media__poster-button {
+    display: none !important;
+  }
+
+  .product-stories__story .deferred-media__poster {
+    display: none !important;
+  }
+
+  .product-stories__story .deferred-media__poster-image {
+    display: none !important;
+  }
+
+  .product-stories__story .deferred-media__poster-icon {
+    display: none !important;
+  }
+
+  /* Asegurar que el video sea visible */
+  .product-stories__story deferred-media[loaded] {
+    background: transparent;
+  }
+
+  .product-stories__nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.3);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: background 0.2s ease;
+    opacity: 0;
+  }
+
+  .product-stories__container:hover .product-stories__nav {
+    opacity: 1;
+  }
+
+  .product-stories__nav:hover {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .product-stories__nav--prev {
+    left: 12px;
+  }
+
+  .product-stories__nav--next {
+    right: 12px;
+  }
+
+  .product-stories__play-pause {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: all 0.2s ease;
+  }
+
+  .product-stories__play-pause:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1.05);
+  }
+
+  .product-stories__play-pause .icon-play,
+  .product-stories__play-pause .icon-pause {
+    display: none;
+  }
+
+  .product-stories__play-pause.paused .icon-play {
+    display: block;
+  }
+
+  .product-stories__play-pause.playing .icon-pause {
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-stories__container {
+      max-width: 100%;
+      max-height: 100vh;
+      border-radius: 0;
+    }
+
+    .product-stories__circle-border {
+      width: 70px;
+      height: 70px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Historias del producto",
+  "tag": "section",
+  "class": "section-product-stories",
+  "templates": ["product"],
+  "blocks": [
+    {
+      "type": "story_video",
+      "name": "Video personalizado",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video"
+        },
+        {
+          "type": "image_picker",
+          "id": "preview_image",
+          "label": "Imagen de preview (círculo)"
+        }
+      ]
+    }
+  ],
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_stories",
+      "label": "Activar historias",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "video_source",
+      "label": "Origen de los videos",
+      "options": [
+        {
+          "value": "product",
+          "label": "Videos del producto"
+        },
+        {
+          "value": "custom",
+          "label": "Videos personalizados"
+        }
+      ],
+      "default": "product",
+      "info": "Elige 'Videos del producto' para usar los videos del producto actual, o 'Videos personalizados' para agregar tus propios videos"
+    },
+    {
+      "type": "header",
+      "content": "Alineación"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alineación de círculos",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "flex-end",
+          "label": "Derecha"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "header",
+      "content": "Relleno"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Relleno superior",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Relleno inferior",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_left",
+      "label": "Relleno izquierdo",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_right",
+      "label": "Relleno derecho",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Historias del producto"
+    }
+  ]
+}
+{% endschema %}
+
