@@ -12,6 +12,8 @@ class ARWallPreview {
     this.processingInterval = null;
     this.stream = null;
     this.artworkScale = 0.25;
+    this.lastRegion = null;
+    this.regionStability = 0;
     
     this.init();
   }
@@ -134,8 +136,8 @@ class ARWallPreview {
       const constraints = {
         video: {
           facingMode: 'environment',
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          width: { ideal: 640 },
+          height: { ideal: 480 }
         }
       };
       
@@ -169,7 +171,7 @@ class ARWallPreview {
       this.segmentationModel = await bodyPix.load({
         architecture: 'MobileNetV1',
         outputStride: 16,
-        multiplier: 0.75,
+        multiplier: 0.50,
         quantBytes: 2
       });
       
@@ -189,11 +191,11 @@ class ARWallPreview {
     try {
       const segmentation = await this.segmentationModel.segmentPerson(this.video, {
         flipHorizontal: false,
-        internalResolution: 'medium',
-        segmentationThreshold: 0.7
+        internalResolution: 'low',
+        segmentationThreshold: 0.6
       });
       
-      const regions = this.createGrid(10, 10);
+      const regions = this.createGrid(6, 6);
       
       const bestRegion = this.findBestRegion(regions, segmentation);
       
@@ -300,25 +302,38 @@ class ARWallPreview {
       const region = await this.detectFreeSpace();
       
       if (region) {
-        this.hideHelp();
+        if (this.isSimilarRegion(region, this.lastRegion)) {
+          this.regionStability++;
+        } else {
+          this.regionStability = 0;
+        }
         
-        const centerX = region.x + region.width / 2;
-        const centerY = region.y + region.height / 2;
+        if (this.regionStability > 1 || !this.lastRegion) {
+          this.lastRegion = region;
+        }
         
-        const size = Math.min(region.width, region.height) * this.artworkScale * 2;
-        
-        this.drawShadow(centerX, centerY, size);
-        
-        this.ctx.drawImage(
-          this.artworkImage,
-          centerX - size / 2,
-          centerY - size / 2,
-          size,
-          size * this.artworkAspectRatio
-        );
-        
+        if (this.lastRegion) {
+          this.hideHelp();
+          
+          const centerX = this.lastRegion.x + this.lastRegion.width / 2;
+          const centerY = this.lastRegion.y + this.lastRegion.height / 2;
+          
+          const size = Math.min(this.lastRegion.width, this.lastRegion.height) * this.artworkScale * 2;
+          
+          this.drawShadow(centerX, centerY, size);
+          
+          this.ctx.drawImage(
+            this.artworkImage,
+            centerX - size / 2,
+            centerY - size / 2,
+            size,
+            size * this.artworkAspectRatio
+          );
+        }
       } else {
         this.showHelp();
+        this.lastRegion = null;
+        this.regionStability = 0;
       }
       
     } catch (error) {
@@ -326,6 +341,16 @@ class ARWallPreview {
     } finally {
       this.isProcessing = false;
     }
+  }
+  
+  isSimilarRegion(region1, region2) {
+    if (!region1 || !region2) return false;
+    
+    const threshold = 50;
+    const xDiff = Math.abs(region1.x - region2.x);
+    const yDiff = Math.abs(region1.y - region2.y);
+    
+    return xDiff < threshold && yDiff < threshold;
   }
 
   drawShadow(centerX, centerY, size) {
@@ -354,7 +379,7 @@ class ARWallPreview {
   startProcessing() {
     this.processingInterval = setInterval(() => {
       this.renderFrame();
-    }, 100);
+    }, 250);
   }
 
   stopProcessing() {
