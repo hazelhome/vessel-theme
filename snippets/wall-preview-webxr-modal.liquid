@@ -1,0 +1,68 @@
+<div class="webxr-modal" data-webxr-modal>
+  <div class="webxr-modal__header">
+    <button class="webxr-modal__close" data-webxr-close aria-label="Cerrar">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <h3 class="webxr-modal__title">Realidad Aumentada</h3>
+  </div>
+
+  <div class="webxr-modal__container" data-webxr-container>
+    <!-- Three.js canvas will be injected here -->
+  </div>
+
+  <div class="webxr-modal__loading" data-webxr-loading style="display: none;">
+    <div class="webxr-modal__loading-spinner"></div>
+    <p class="webxr-modal__loading-text" data-webxr-loading-text>Cargando...</p>
+  </div>
+
+  <div class="webxr-modal__info" data-webxr-info style="display: none;">
+    <div class="webxr-modal__info-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="white" stroke="none">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+      </svg>
+      <span>Toca una pared para colocar</span>
+    </div>
+  </div>
+
+  <div class="webxr-modal__controls" data-webxr-controls style="display: none;">
+    <button class="webxr-modal__control-btn" data-webxr-size-down aria-label="Reducir tamaño">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+    
+    <button class="webxr-modal__control-btn webxr-modal__control-btn--primary" data-webxr-capture aria-label="Capturar foto">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+        <circle cx="12" cy="13" r="4"></circle>
+      </svg>
+    </button>
+    
+    <button class="webxr-modal__control-btn" data-webxr-size-up aria-label="Aumentar tamaño">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="webxr-modal__secondary-controls">
+    <button class="webxr-modal__secondary-btn" data-webxr-reset>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+        <path d="M21 3v5h-5"/>
+      </svg>
+      <span>Recolocar</span>
+    </button>
+  </div>
+
+  <div class="webxr-modal__error" data-webxr-error style="display: none;">
+    <div class="webxr-modal__error-icon">⚠️</div>
+    <p class="webxr-modal__error-text" data-webxr-error-text></p>
+    <button class="webxr-modal__error-btn" data-webxr-close>Cerrar</button>
+  </div>
+</div>
+

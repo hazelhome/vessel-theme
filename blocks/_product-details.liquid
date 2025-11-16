@@ -58,17 +58,31 @@
         
         <button 
           type="button" 
-          class="wall-preview-btn wall-preview-btn--ar"
+          class="wall-preview-btn wall-preview-btn--ar wall-preview-btn--webxr"
+          data-webxr-preview-trigger
+          data-product-image="{{ product.featured_image | image_url: width: 1200 }}"
+          data-product-title="{{ product.title | escape }}"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          Ver en AR
+          <span class="badge">🚀 Real</span>
+        </button>
+        
+        <button 
+          type="button" 
+          class="wall-preview-btn wall-preview-btn--ar wall-preview-btn--fallback"
           data-ar-preview-trigger
           data-product-image="{{ product.featured_image | image_url: width: 1200 }}"
           data-product-title="{{ product.title | escape }}"
+          style="display: none;"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
             <circle cx="12" cy="13" r="4"></circle>
           </svg>
-          Modo AR
-          <span class="badge">Pro</span>
+          Vista Live
         </button>
       </div>
 
@@ -76,9 +90,44 @@
       <script src="{{ 'wall-preview.js' | asset_url }}" defer></script>
       {% render 'wall-preview-modal' %}
       
+      <!-- WebXR AR (Main AR experience) -->
+      <link rel="stylesheet" href="{{ 'wall-preview-webxr.css' | asset_url }}">
+      <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js" defer></script>
+      <script src="{{ 'wall-preview-webxr.js' | asset_url }}" defer></script>
+      {% render 'wall-preview-webxr-modal' %}
+      
+      <!-- Fallback AR (Basic camera mode) -->
       <link rel="stylesheet" href="{{ 'wall-preview-ar.css' | asset_url }}">
       <script src="{{ 'wall-preview-ar.js' | asset_url }}" defer></script>
       {% render 'wall-preview-ar-modal' %}
+      
+      <script>
+        // Show appropriate button based on WebXR support
+        (async function() {
+          const webxrBtn = document.querySelector('.wall-preview-btn--webxr');
+          const fallbackBtn = document.querySelector('.wall-preview-btn--fallback');
+          
+          if (!webxrBtn || !fallbackBtn) return;
+          
+          let isXRSupported = false;
+          
+          if ('xr' in navigator) {
+            try {
+              isXRSupported = await navigator.xr.isSessionSupported('immersive-ar');
+            } catch (e) {
+              isXRSupported = false;
+            }
+          }
+          
+          if (isXRSupported) {
+            webxrBtn.style.display = 'flex';
+            fallbackBtn.style.display = 'none';
+          } else {
+            webxrBtn.style.display = 'none';
+            fallbackBtn.style.display = 'flex';
+          }
+        })();
+      </script>
     {%- endif -%}
   {% endcapture %}
 
