@@ -111,11 +111,29 @@ class ModelViewerARPreview {
       
       console.log('Image loaded, aspect ratio:', aspectRatio);
       
-      // Create a simple GLB with a plane
-      const glb = this.createSimpleGLB(imageURL, aspectRatio);
+      // Wait for Three.js to be available
+      if (typeof THREE === 'undefined') {
+        console.log('Three.js not loaded, waiting...');
+        await new Promise(resolve => {
+          const checkThree = setInterval(() => {
+            if (typeof THREE !== 'undefined') {
+              clearInterval(checkThree);
+              resolve();
+            }
+          }, 100);
+        });
+      }
+      
+      // Generate GLB with Three.js
+      const glbBlob = await this.createGLBWithThreeJS(imageURL, aspectRatio);
+      
+      // Create object URL
+      const glbURL = URL.createObjectURL(glbBlob);
+      
+      console.log('GLB created successfully:', glbURL);
       
       // Set the model
-      this.modelViewer.src = glb;
+      this.modelViewer.src = glbURL;
       
       // Set poster
       this.modelViewer.poster = imageURL;
@@ -128,125 +146,93 @@ class ModelViewerARPreview {
     }
   }
 
-  createSimpleGLB(textureURL, aspectRatio) {
-    // For now, we'll use a data URI with a simple plane
-    // In production, you'd want to generate a proper GLB server-side
+  async createGLBWithThreeJS(imageURL, aspectRatio) {
+    console.log('Creating GLB with Three.js...');
     
-    // Simple workaround: Use model-viewer's ability to show images
-    // We'll create a minimal GLTF with a textured plane
+    // Create scene
+    const scene = new THREE.Scene();
     
+    // Load texture
+    const textureLoader = new THREE.TextureLoader();
+    const texture = await new Promise((resolve, reject) => {
+      textureLoader.load(imageURL, resolve, undefined, reject);
+    });
+    
+    // Create plane geometry with correct aspect ratio
     const width = 1.0;
     const height = width * aspectRatio;
+    const geometry = new THREE.PlaneGeometry(width, height);
     
-    const gltf = {
-      asset: {
-        version: "2.0",
-        generator: "HazelHome AR Generator"
-      },
-      scene: 0,
-      scenes: [{
-        nodes: [0]
-      }],
-      nodes: [{
-        mesh: 0,
-        scale: [width, height, 1]
-      }],
-      meshes: [{
-        primitives: [{
-          attributes: {
-            POSITION: 0,
-            TEXCOORD_0: 1,
-            NORMAL: 2
-          },
-          indices: 3,
-          material: 0
-        }]
-      }],
-      materials: [{
-        pbrMetallicRoughness: {
-          baseColorTexture: {
-            index: 0
-          },
-          metallicFactor: 0,
-          roughnessFactor: 1
-        },
-        doubleSided: true
-      }],
-      textures: [{
-        source: 0
-      }],
-      images: [{
-        uri: textureURL
-      }],
-      accessors: [
-        {
-          bufferView: 0,
-          componentType: 5126,
-          count: 4,
-          type: "VEC3",
-          max: [0.5, 0.5, 0],
-          min: [-0.5, -0.5, 0]
-        },
-        {
-          bufferView: 1,
-          componentType: 5126,
-          count: 4,
-          type: "VEC2"
-        },
-        {
-          bufferView: 2,
-          componentType: 5126,
-          count: 4,
-          type: "VEC3"
-        },
-        {
-          bufferView: 3,
-          componentType: 5123,
-          count: 6,
-          type: "SCALAR"
-        }
-      ],
-      bufferViews: [
-        { buffer: 0, byteOffset: 0, byteLength: 48 },
-        { buffer: 0, byteOffset: 48, byteLength: 32 },
-        { buffer: 0, byteOffset: 80, byteLength: 48 },
-        { buffer: 0, byteOffset: 128, byteLength: 12 }
-      ],
-      buffers: [{
-        byteLength: 140,
-        uri: "data:application/octet-stream;base64," + btoa(String.fromCharCode(
-          // Positions
-          ...new Float32Array([-0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0, -0.5, 0.5, 0]).reduce((arr, val) => {
-            const buffer = new ArrayBuffer(4);
-            new Float32Array(buffer)[0] = val;
-            return arr.concat(Array.from(new Uint8Array(buffer)));
-          }, []),
-          // UVs
-          ...new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]).reduce((arr, val) => {
-            const buffer = new ArrayBuffer(4);
-            new Float32Array(buffer)[0] = val;
-            return arr.concat(Array.from(new Uint8Array(buffer)));
-          }, []),
-          // Normals
-          ...new Float32Array([0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1]).reduce((arr, val) => {
-            const buffer = new ArrayBuffer(4);
-            new Float32Array(buffer)[0] = val;
-            return arr.concat(Array.from(new Uint8Array(buffer)));
-          }, []),
-          // Indices
-          ...new Uint16Array([0, 1, 2, 0, 2, 3]).reduce((arr, val) => {
-            const buffer = new ArrayBuffer(2);
-            new Uint16Array(buffer)[0] = val;
-            return arr.concat(Array.from(new Uint8Array(buffer)));
-          }, [])
-        ))
-      }]
-    };
+    // Create material with texture
+    const material = new THREE.MeshStandardMaterial({
+      map: texture,
+      side: THREE.DoubleSide,
+      metalness: 0,
+      roughness: 1
+    });
     
-    const gltfString = JSON.stringify(gltf);
-    const gltfBase64 = btoa(unescape(encodeURIComponent(gltfString)));
+    // Create mesh
+    const mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
     
-    return `data:model/gltf+json;base64,${gltfBase64}`;
+    // Add frame (white border)
+    const frameThickness = 0.02;
+    const frameMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      metalness: 0.1,
+      roughness: 0.8
+    });
+    
+    // Frame edges
+    const frameDepth = 0.01;
+    
+    // Top frame
+    const topFrame = new THREE.BoxGeometry(width + frameThickness * 2, frameThickness, frameDepth);
+    const topFrameMesh = new THREE.Mesh(topFrame, frameMaterial);
+    topFrameMesh.position.y = height / 2 + frameThickness / 2;
+    topFrameMesh.position.z = -frameDepth / 2;
+    scene.add(topFrameMesh);
+    
+    // Bottom frame
+    const bottomFrameMesh = new THREE.Mesh(topFrame, frameMaterial);
+    bottomFrameMesh.position.y = -height / 2 - frameThickness / 2;
+    bottomFrameMesh.position.z = -frameDepth / 2;
+    scene.add(bottomFrameMesh);
+    
+    // Left frame
+    const sideFrame = new THREE.BoxGeometry(frameThickness, height, frameDepth);
+    const leftFrameMesh = new THREE.Mesh(sideFrame, frameMaterial);
+    leftFrameMesh.position.x = -width / 2 - frameThickness / 2;
+    leftFrameMesh.position.z = -frameDepth / 2;
+    scene.add(leftFrameMesh);
+    
+    // Right frame
+    const rightFrameMesh = new THREE.Mesh(sideFrame, frameMaterial);
+    rightFrameMesh.position.x = width / 2 + frameThickness / 2;
+    rightFrameMesh.position.z = -frameDepth / 2;
+    scene.add(rightFrameMesh);
+    
+    console.log('Scene created, exporting to GLB...');
+    
+    // Export to GLB
+    const exporter = new THREE.GLTFExporter();
+    
+    const glb = await new Promise((resolve, reject) => {
+      exporter.parse(
+        scene,
+        (result) => {
+          console.log('GLB export successful');
+          resolve(new Blob([result], { type: 'model/gltf-binary' }));
+        },
+        (error) => {
+          console.error('GLB export error:', error);
+          reject(error);
+        },
+        { binary: true }
+      );
+    });
+    
+    return glb;
   }
 
   close() {

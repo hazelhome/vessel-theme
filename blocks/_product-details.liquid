@@ -97,6 +97,8 @@
       <!-- Model Viewer AR (Native AR with ARCore/ARKit) -->
       <link rel="stylesheet" href="{{ 'wall-preview-model-viewer.css' | asset_url }}">
       <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/exporters/GLTFExporter.js"></script>
       <script src="{{ 'wall-preview-model-viewer.js' | asset_url }}" defer></script>
       {% render 'wall-preview-model-viewer' %}
       
