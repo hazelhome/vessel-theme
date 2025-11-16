@@ -10,9 +10,10 @@ class ProductStories {
     this.isPlaying = false;
     this.modalIsOpen = false;
     this.hasPlayedOnce = false;
-    this.duration = 5000;
-    this.progressInterval = null;
     this.currentVideo = null;
+    this.progressInterval = null;
+    this.currentVideoTimeUpdateHandler = null;
+    this.currentVideoDurationChangeHandler = null;
     
     this.init();
   }
@@ -143,20 +144,40 @@ class ProductStories {
     this.stories.forEach((story, index) => {
       const deferredMedia = story.querySelector('deferred-media');
       if (deferredMedia) {
-        const video = this.getVideoElement(story);
-        if (video) {
-          video.addEventListener('ended', () => {
-            if (index === this.currentIndex) {
-              this.nextStory();
-            }
-          });
+        const setupVideoListeners = () => {
+          const video = this.getVideoElement(story);
+          if (video) {
+            video.addEventListener('ended', () => {
+              if (index === this.currentIndex) {
+                const progressBar = this.progressBars[index];
+                if (progressBar) {
+                  const progressFill = progressBar.querySelector('.product-stories__progress-fill');
+                  if (progressFill) {
+                    progressFill.style.width = '100%';
+                  }
+                }
+                this.nextStory();
+              }
+            }, { once: false });
 
-          video.addEventListener('loadedmetadata', () => {
-            if (index === this.currentIndex && video.duration) {
-              this.duration = video.duration * 1000;
-              this.updateProgressDuration();
-            }
-          });
+            video.addEventListener('loadedmetadata', () => {
+              if (index === this.currentIndex && video.duration && isFinite(video.duration) && video.duration > 0) {
+                this.updateProgressBarWidth();
+              }
+            }, { once: false });
+
+            video.addEventListener('durationchange', () => {
+              if (index === this.currentIndex && video.duration && isFinite(video.duration) && video.duration > 0) {
+                this.updateProgressBarWidth();
+              }
+            }, { once: false });
+          }
+        };
+
+        if (deferredMedia.classList.contains('loaded')) {
+          setupVideoListeners();
+        } else {
+          deferredMedia.addEventListener('load', setupVideoListeners, { once: true });
         }
       }
     });
@@ -191,6 +212,48 @@ class ProductStories {
     if (deferredMedia) {
       this.loadDeferredMedia(deferredMedia);
       
+      const setupStoryVideoEvents = () => {
+        const video = this.getVideoElement(story);
+        if (video) {
+          const handleEnded = () => {
+            if (index === this.currentIndex) {
+              const progressBar = this.progressBars[index];
+              if (progressBar) {
+                const progressFill = progressBar.querySelector('.product-stories__progress-fill');
+                if (progressFill) {
+                  progressFill.style.width = '100%';
+                }
+              }
+              this.nextStory();
+            }
+          };
+
+          const handleMetadata = () => {
+            if (index === this.currentIndex && video.duration && isFinite(video.duration) && video.duration > 0) {
+              this.updateProgressBarWidth();
+            }
+          };
+
+          const handleDurationChange = () => {
+            if (index === this.currentIndex && video.duration && isFinite(video.duration) && video.duration > 0) {
+              this.updateProgressBarWidth();
+            }
+          };
+
+          video.addEventListener('ended', handleEnded, { once: false });
+          video.addEventListener('loadedmetadata', handleMetadata, { once: false });
+          video.addEventListener('durationchange', handleDurationChange, { once: false });
+        }
+      };
+      
+      if (deferredMedia.classList.contains('loaded')) {
+        setTimeout(setupStoryVideoEvents, 100);
+      } else {
+        deferredMedia.addEventListener('load', () => {
+          setTimeout(setupStoryVideoEvents, 100);
+        }, { once: true });
+      }
+      
       // SOLO reproducir si el modal está explícitamente abierto
       if (this.modalIsOpen && (wasPlaying || !this.hasPlayedOnce)) {
         if (this.loadingVideo) return;
@@ -201,12 +264,29 @@ class ProductStories {
           const video = this.getVideoElement(story);
           if (video && video.readyState >= 2) {
             this.loadingVideo = false;
-            this.play(true);
+            if (video.duration && isFinite(video.duration) && video.duration > 0) {
+              this.play(true);
+            } else {
+              video.addEventListener('loadedmetadata', () => {
+                this.loadingVideo = false;
+                if (this.modalIsOpen && video.duration && isFinite(video.duration) && video.duration > 0) {
+                  this.play(true);
+                }
+              }, { once: true });
+            }
           } else if (video) {
             video.addEventListener('loadeddata', () => {
               this.loadingVideo = false;
               if (this.modalIsOpen) {
-                this.play(true);
+                if (video.duration && isFinite(video.duration) && video.duration > 0) {
+                  this.play(true);
+                } else {
+                  video.addEventListener('loadedmetadata', () => {
+                    if (this.modalIsOpen && video.duration && isFinite(video.duration) && video.duration > 0) {
+                      this.play(true);
+                    }
+                  }, { once: true });
+                }
               }
             }, { once: true });
           } else {
@@ -299,27 +379,93 @@ class ProductStories {
     }
   }
 
+
+  updateProgressBarWidth() {
+    if (!this.isPlaying) return;
+    
+    const video = this.getVideoElement(this.stories[this.currentIndex]);
+    if (!video) return;
+    
+    const progressBar = this.progressBars[this.currentIndex];
+    if (!progressBar) return;
+    
+    const progressFill = progressBar.querySelector('.product-stories__progress-fill');
+    if (!progressFill) return;
+    
+    const duration = video.duration;
+    const currentTime = video.currentTime || 0;
+    
+    if (duration && isFinite(duration) && duration > 0 && isFinite(currentTime)) {
+      const progress = Math.min(Math.max((currentTime / duration) * 100, 0), 100);
+      progressFill.style.width = `${progress}%`;
+    }
+  }
+
   startProgress() {
     this.stopProgress();
     
+    const video = this.getVideoElement(this.stories[this.currentIndex]);
+    if (!video) return;
+    
     const progressBar = this.progressBars[this.currentIndex];
-    const progressFill = progressBar.querySelector('.product-stories__progress-fill');
+    if (!progressBar) return;
     
     progressBar.classList.add('active');
     
-    // Set CSS variable for animation duration
-    this.container.style.setProperty('--story-duration', `${this.duration}ms`);
+    this.updateProgressBarWidth();
     
-    // Auto advance after duration
-    this.progressInterval = setTimeout(() => {
-      this.nextStory();
-    }, this.duration);
+    const storyIndex = this.currentIndex;
+    const handleTimeUpdate = () => {
+      if (this.currentIndex === storyIndex && this.isPlaying) {
+        this.updateProgressBarWidth();
+      }
+    };
+    
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    this.currentVideoTimeUpdateHandler = handleTimeUpdate;
+    
+    const handleDurationChange = () => {
+      if (this.currentIndex === storyIndex) {
+        this.updateProgressBarWidth();
+      }
+    };
+    
+    video.addEventListener('durationchange', handleDurationChange);
+    this.currentVideoDurationChangeHandler = handleDurationChange;
+    
+    const updateProgressInterval = () => {
+      if (this.currentIndex === storyIndex && this.isPlaying) {
+        this.updateProgressBarWidth();
+      }
+    };
+    
+    this.progressInterval = setInterval(updateProgressInterval, 100);
+    
+    if (video.readyState >= 2) {
+      this.updateProgressBarWidth();
+    } else {
+      video.addEventListener('loadedmetadata', () => {
+        this.updateProgressBarWidth();
+      }, { once: true });
+    }
   }
 
   stopProgress() {
     if (this.progressInterval) {
-      clearTimeout(this.progressInterval);
+      clearInterval(this.progressInterval);
       this.progressInterval = null;
+    }
+    
+    const video = this.getVideoElement(this.stories[this.currentIndex]);
+    if (video) {
+      if (this.currentVideoTimeUpdateHandler) {
+        video.removeEventListener('timeupdate', this.currentVideoTimeUpdateHandler);
+        this.currentVideoTimeUpdateHandler = null;
+      }
+      if (this.currentVideoDurationChangeHandler) {
+        video.removeEventListener('durationchange', this.currentVideoDurationChangeHandler);
+        this.currentVideoDurationChangeHandler = null;
+      }
     }
     
     this.progressBars.forEach(bar => {
@@ -331,16 +477,18 @@ class ProductStories {
     this.progressBars.forEach((bar, index) => {
       bar.classList.remove('active', 'completed');
       const fill = bar.querySelector('.product-stories__progress-fill');
-      fill.style.width = '0%';
+      if (fill) {
+        fill.style.width = '0%';
+      }
       
       if (index < this.currentIndex) {
         bar.classList.add('completed');
+        const fill = bar.querySelector('.product-stories__progress-fill');
+        if (fill) {
+          fill.style.width = '100%';
+        }
       }
     });
-  }
-
-  updateProgressDuration() {
-    this.container.style.setProperty('--story-duration', `${this.duration}ms`);
   }
 
   updatePlayButton() {

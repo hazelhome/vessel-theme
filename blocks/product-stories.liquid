@@ -380,21 +380,8 @@
     transition: width 0.1s linear;
   }
 
-  .product-stories__progress-bar.active .product-stories__progress-fill {
-    animation: progress-fill var(--story-duration, 5s) linear forwards;
-  }
-
   .product-stories__progress-bar.completed .product-stories__progress-fill {
     width: 100%;
-  }
-
-  @keyframes progress-fill {
-    from {
-      width: 0%;
-    }
-    to {
-      width: 100%;
-    }
   }
 
   .product-stories__viewer {
