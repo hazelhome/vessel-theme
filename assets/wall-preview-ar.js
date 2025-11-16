@@ -14,6 +14,9 @@ class ARWallPreview {
     this.artworkScale = 0.25;
     this.lastRegion = null;
     this.regionStability = 0;
+    this.stablePositionX = null;
+    this.stablePositionY = null;
+    this.framesWithoutDetection = 0;
     
     this.init();
   }
@@ -162,23 +165,10 @@ class ARWallPreview {
 
   async loadModels() {
     try {
-      this.updateProgress('Cargando modelo de IA...', 0);
-      
-      if (!window.bodyPix) {
-        throw new Error('BodyPix library not loaded');
-      }
-      
-      this.segmentationModel = await bodyPix.load({
-        architecture: 'MobileNetV1',
-        outputStride: 16,
-        multiplier: 0.50,
-        quantBytes: 2
-      });
-      
-      this.updateProgress('Modelo cargado', 100);
-      
+      this.updateProgress('Preparando...', 100);
+      await new Promise(resolve => setTimeout(resolve, 500));
     } catch (error) {
-      console.error('Model loading error:', error);
+      console.error('Init error:', error);
       throw new Error('MODEL_LOAD_FAILED');
     }
   }
@@ -299,42 +289,24 @@ class ARWallPreview {
     try {
       this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
       
-      const region = await this.detectFreeSpace();
-      
-      if (region) {
-        if (this.isSimilarRegion(region, this.lastRegion)) {
-          this.regionStability++;
-        } else {
-          this.regionStability = 0;
-        }
-        
-        if (this.regionStability > 1 || !this.lastRegion) {
-          this.lastRegion = region;
-        }
-        
-        if (this.lastRegion) {
-          this.hideHelp();
-          
-          const centerX = this.lastRegion.x + this.lastRegion.width / 2;
-          const centerY = this.lastRegion.y + this.lastRegion.height / 2;
-          
-          const size = Math.min(this.lastRegion.width, this.lastRegion.height) * this.artworkScale * 2;
-          
-          this.drawShadow(centerX, centerY, size);
-          
-          this.ctx.drawImage(
-            this.artworkImage,
-            centerX - size / 2,
-            centerY - size / 2,
-            size,
-            size * this.artworkAspectRatio
-          );
-        }
-      } else {
-        this.showHelp();
-        this.lastRegion = null;
-        this.regionStability = 0;
+      if (this.stablePositionX === null) {
+        this.stablePositionX = this.canvas.width / 2;
+        this.stablePositionY = this.canvas.height / 2;
       }
+      
+      this.hideHelp();
+      
+      const size = this.canvas.width * this.artworkScale;
+      
+      this.drawShadow(this.stablePositionX, this.stablePositionY, size);
+      
+      this.ctx.drawImage(
+        this.artworkImage,
+        this.stablePositionX - size / 2,
+        this.stablePositionY - size / 2,
+        size,
+        size * this.artworkAspectRatio
+      );
       
     } catch (error) {
       console.error('Render error:', error);
@@ -346,7 +318,7 @@ class ARWallPreview {
   isSimilarRegion(region1, region2) {
     if (!region1 || !region2) return false;
     
-    const threshold = 50;
+    const threshold = 100;
     const xDiff = Math.abs(region1.x - region2.x);
     const yDiff = Math.abs(region1.y - region2.y);
     
@@ -379,7 +351,7 @@ class ARWallPreview {
   startProcessing() {
     this.processingInterval = setInterval(() => {
       this.renderFrame();
-    }, 250);
+    }, 50);
   }
 
   stopProcessing() {
