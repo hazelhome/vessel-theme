@@ -72,16 +72,16 @@
         
         <button 
           type="button" 
-          class="wall-preview-btn wall-preview-btn--webxr"
-          data-webxr-preview-trigger
+          class="wall-preview-btn wall-preview-btn--model-viewer"
+          data-model-viewer-trigger
           data-product-image="{{ product.featured_image | image_url: width: 1200 }}"
           data-product-title="{{ product.title | escape }}"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
-          AR Real
-          <span class="badge">🚀</span>
+          AR Nativo
+          <span class="badge">✨ Real</span>
         </button>
       </div>
 
@@ -94,11 +94,11 @@
       <script src="{{ 'wall-preview-ar.js' | asset_url }}" defer></script>
       {% render 'wall-preview-ar-modal' %}
       
-      <!-- WebXR AR (Real tracking with plane detection) -->
-      <link rel="stylesheet" href="{{ 'wall-preview-webxr.css' | asset_url }}">
-      <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js" defer></script>
-      <script src="{{ 'wall-preview-webxr.js' | asset_url }}" defer></script>
-      {% render 'wall-preview-webxr-modal' %}
+      <!-- Model Viewer AR (Native AR with ARCore/ARKit) -->
+      <link rel="stylesheet" href="{{ 'wall-preview-model-viewer.css' | asset_url }}">
+      <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+      <script src="{{ 'wall-preview-model-viewer.js' | asset_url }}" defer></script>
+      {% render 'wall-preview-model-viewer' %}
       
       <!-- Debug console for mobile (TEMPORARY - Remove after testing) -->
       <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
