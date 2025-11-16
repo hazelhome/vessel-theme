@@ -269,8 +269,14 @@ class WebXRWallPreview {
       
       console.log('Renderer XR session set successfully');
       
-      // Get reference space
-      this.xrRefSpace = await this.xrSession.requestReferenceSpace('local-floor');
+      // Get reference space (try local-floor first, fallback to local)
+      try {
+        this.xrRefSpace = await this.xrSession.requestReferenceSpace('local-floor');
+        console.log('Using local-floor reference space');
+      } catch (e) {
+        console.log('local-floor not supported, using local');
+        this.xrRefSpace = await this.xrSession.requestReferenceSpace('local');
+      }
       
       // Setup hit testing
       this.setupHitTesting();
