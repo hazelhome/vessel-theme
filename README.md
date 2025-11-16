@@ -49,24 +49,30 @@ Two complementary modes for visualizing artwork on walls:
 - Resize with slider maintaining aspect ratio
 - Download preview image
 
-**Modo AR (Machine Learning):**
-- Real-time camera feed with AI-powered wall detection
-- TensorFlow.js + BodyPix segmentation model
-- Automatic free space detection (avoids people/objects)
-- Dynamic artwork positioning
-- Adjustable size with live preview
-- Progressive loading: ~3-5 seconds first time, < 1 second cached
-- Works on mobile and desktop (requires camera access)
+**Modo AR (Live Preview):**
+- Real-time camera feed with live artwork overlay
+- Drag & drop to position artwork anywhere
+- Touch and mouse support for desktop and mobile
+- Smooth animations with interpolation
+- Multi-layer shadow effects for realistic depth
+- Adjustable size with +/- controls
+- Capture/download functionality
+- Instant load time (< 0.5s)
+- No heavy ML libraries - optimized for performance
+- 60 FPS smooth rendering with requestAnimationFrame
+- Professional gradient UI with pulsing animations
 
-**Phase 1 (MVP - Current):**
-- ✅ Camera access with environment-facing camera
-- ✅ BodyPix segmentation for person/object detection
-- ✅ Grid-based region analysis (10x10)
-- ✅ Free space detection with center preference
-- ✅ Flat artwork overlay with realistic shadows
-- ✅ Adjustable size controls
-- ✅ Capture/download functionality
-- ⏱️ ~100ms per frame processing
+**Features:**
+- ✅ Real-time camera access (environment-facing on mobile)
+- ✅ Drag & drop artwork positioning
+- ✅ Multi-layer shadows for depth perception
+- ✅ Smooth position interpolation
+- ✅ Frame border effects
+- ✅ Professional gradient UI
+- ✅ Touch and mouse controls
+- ✅ Size adjustment controls
+- ✅ Screenshot/download functionality
+- ⚡ 60 FPS rendering
 
 **Future Phases:**
 - Phase 2: Depth estimation for realistic sizing based on distance

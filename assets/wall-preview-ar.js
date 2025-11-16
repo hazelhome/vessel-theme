@@ -1,3 +1,4 @@
+// @ts-nocheck
 class ARWallPreview {
   constructor() {
     this.modal = null;
@@ -23,6 +24,11 @@ class ARWallPreview {
     this.touchStartY = 0;
     this.lastTouchX = 0;
     this.lastTouchY = 0;
+    this.hasEverDragged = false;
+    
+    // Wall detection
+    this.detectionInterval = null;
+    this.suggestedPositions = [];
     
     this.init();
   }
@@ -125,6 +131,12 @@ class ARWallPreview {
       this.touchStartY = y;
       this.lastTouchX = x;
       this.lastTouchY = y;
+      
+      if (!this.hasEverDragged) {
+        this.hasEverDragged = true;
+        this.hideInfo();
+      }
+      
       e.preventDefault();
     }
   }
@@ -171,6 +183,11 @@ class ARWallPreview {
       this.isDragging = true;
       this.lastTouchX = x;
       this.lastTouchY = y;
+      
+      if (!this.hasEverDragged) {
+        this.hasEverDragged = true;
+        this.hideInfo();
+      }
     }
   }
 
@@ -219,6 +236,7 @@ class ARWallPreview {
       this.showInfo();
       
       this.startRendering();
+      this.startWallDetection();
       
     } catch (error) {
       console.error('Error opening AR:', error);
@@ -277,9 +295,16 @@ class ARWallPreview {
     const render = () => {
       if (!this.isActive) return;
       
+      // Auto-snap to best wall position if not dragging and hasn't dragged yet
+      if (!this.isDragging && !this.hasEverDragged && this.suggestedPositions.length > 0) {
+        const best = this.suggestedPositions[0];
+        this.targetX = best.x;
+        this.targetY = best.y;
+      }
+      
       // Smooth interpolation
       if (this.targetX !== null) {
-        const smoothing = 0.15;
+        const smoothing = this.isDragging ? 1 : 0.15;
         this.artworkX += (this.targetX - this.artworkX) * smoothing;
         this.artworkY += (this.targetY - this.artworkY) * smoothing;
       }
@@ -296,6 +321,96 @@ class ARWallPreview {
     };
     
     render();
+  }
+  
+  startWallDetection() {
+    this.detectionInterval = setInterval(() => {
+      if (!this.isActive || this.hasEverDragged) return;
+      this.detectWallAreas();
+    }, 1000);
+  }
+  
+  detectWallAreas() {
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    const sampleWidth = 160;
+    const sampleHeight = 120;
+    tempCanvas.width = sampleWidth;
+    tempCanvas.height = sampleHeight;
+    
+    tempCtx.drawImage(this.video, 0, 0, sampleWidth, sampleHeight);
+    
+    const imageData = tempCtx.getImageData(0, 0, sampleWidth, sampleHeight);
+    const data = imageData.data;
+    
+    const gridSize = 8;
+    const cellWidth = Math.floor(sampleWidth / gridSize);
+    const cellHeight = Math.floor(sampleHeight / gridSize);
+    
+    const regions = [];
+    
+    for (let gy = 0; gy < gridSize; gy++) {
+      for (let gx = 0; gx < gridSize; gx++) {
+        const cellX = gx * cellWidth;
+        const cellY = gy * cellHeight;
+        
+        let totalR = 0, totalG = 0, totalB = 0;
+        let variance = 0;
+        let pixelCount = 0;
+        
+        for (let y = cellY; y < cellY + cellHeight; y++) {
+          for (let x = cellX; x < cellX + cellWidth; x++) {
+            const idx = (y * sampleWidth + x) * 4;
+            totalR += data[idx];
+            totalG += data[idx + 1];
+            totalB += data[idx + 2];
+            pixelCount++;
+          }
+        }
+        
+        const avgR = totalR / pixelCount;
+        const avgG = totalG / pixelCount;
+        const avgB = totalB / pixelCount;
+        
+        for (let y = cellY; y < cellY + cellHeight; y++) {
+          for (let x = cellX; x < cellX + cellWidth; x++) {
+            const idx = (y * sampleWidth + x) * 4;
+            const diffR = data[idx] - avgR;
+            const diffG = data[idx + 1] - avgG;
+            const diffB = data[idx + 2] - avgB;
+            variance += (diffR * diffR + diffG * diffG + diffB * diffB);
+          }
+        }
+        
+        variance = variance / pixelCount;
+        
+        const uniformity = 1 / (1 + variance / 1000);
+        
+        const centerX = (cellX + cellWidth / 2) / sampleWidth;
+        const centerY = (cellY + cellHeight / 2) / sampleHeight;
+        
+        const distanceFromCenter = Math.sqrt(
+          Math.pow(centerX - 0.5, 2) + Math.pow(centerY - 0.5, 2)
+        );
+        const centerScore = 1 - distanceFromCenter;
+        
+        const brightness = (avgR + avgG + avgB) / 3;
+        const brightnessScore = brightness > 80 && brightness < 220 ? 1 : 0.5;
+        
+        const score = uniformity * 0.6 + centerScore * 0.3 + brightnessScore * 0.1;
+        
+        regions.push({
+          x: (cellX + cellWidth / 2) * (this.canvas.width / sampleWidth),
+          y: (cellY + cellHeight / 2) * (this.canvas.height / sampleHeight),
+          score: score,
+          variance: variance
+        });
+      }
+    }
+    
+    regions.sort((a, b) => b.score - a.score);
+    this.suggestedPositions = regions.slice(0, 3);
   }
 
   drawArtworkWithEffects() {
@@ -422,6 +537,11 @@ class ARWallPreview {
       this.stream = null;
     }
     
+    if (this.detectionInterval) {
+      clearInterval(this.detectionInterval);
+      this.detectionInterval = null;
+    }
+    
     this.modal.classList.remove('active');
     document.body.style.overflow = '';
     
@@ -433,6 +553,8 @@ class ARWallPreview {
     this.artworkY = null;
     this.targetX = null;
     this.targetY = null;
+    this.hasEverDragged = false;
+    this.suggestedPositions = [];
   }
 
   showLoading() {
@@ -461,6 +583,13 @@ class ARWallPreview {
       info.style.display = 'block';
       const helpText = info.querySelector('.ar-modal__info-item span');
       if (helpText) helpText.textContent = 'Arrastra el cuadro';
+    }
+  }
+  
+  hideInfo() {
+    const info = document.querySelector('[data-ar-info]');
+    if (info) {
+      info.style.display = 'none';
     }
   }
 
