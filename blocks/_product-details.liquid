@@ -98,7 +98,14 @@
       <link rel="stylesheet" href="{{ 'wall-preview-model-viewer.css' | asset_url }}">
       <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/examples/js/exporters/GLTFExporter.js"></script>
+      <script>
+        // Load GLTFExporter from CDN
+        (async function() {
+          const GLTFExporterModule = await import('https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/exporters/GLTFExporter.js');
+          window.GLTFExporter = GLTFExporterModule.GLTFExporter;
+          console.log('GLTFExporter loaded:', window.GLTFExporter);
+        })();
+      </script>
       <script src="{{ 'wall-preview-model-viewer.js' | asset_url }}" defer></script>
       {% render 'wall-preview-model-viewer' %}
       

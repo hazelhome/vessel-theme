@@ -111,13 +111,14 @@ class ModelViewerARPreview {
       
       console.log('Image loaded, aspect ratio:', aspectRatio);
       
-      // Wait for Three.js to be available
-      if (typeof THREE === 'undefined') {
-        console.log('Three.js not loaded, waiting...');
+      // Wait for Three.js and GLTFExporter to be available
+      if (typeof THREE === 'undefined' || typeof GLTFExporter === 'undefined') {
+        console.log('Waiting for Three.js and GLTFExporter...');
         await new Promise(resolve => {
-          const checkThree = setInterval(() => {
-            if (typeof THREE !== 'undefined') {
-              clearInterval(checkThree);
+          const checkLibs = setInterval(() => {
+            if (typeof THREE !== 'undefined' && typeof GLTFExporter !== 'undefined') {
+              console.log('Three.js and GLTFExporter ready');
+              clearInterval(checkLibs);
               resolve();
             }
           }, 100);
@@ -214,8 +215,8 @@ class ModelViewerARPreview {
     
     console.log('Scene created, exporting to GLB...');
     
-    // Export to GLB
-    const exporter = new THREE.GLTFExporter();
+    // Export to GLB (use global GLTFExporter)
+    const exporter = new GLTFExporter();
     
     const glb = await new Promise((resolve, reject) => {
       exporter.parse(
