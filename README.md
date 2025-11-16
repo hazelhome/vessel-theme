@@ -40,6 +40,38 @@ Modern Shopify theme for Hazel Home with enhanced product cards and quick add fu
 - Configurable through theme editor settings
 - Videos can be displayed separately in Product Stories block
 
+### Wall Preview System (for "cuadro" tagged products)
+Two complementary modes for visualizing artwork on walls:
+
+**Modo Foto:**
+- Upload a photo of your wall
+- Drag and drop artwork to position
+- Resize with slider maintaining aspect ratio
+- Download preview image
+
+**Modo AR (Machine Learning):**
+- Real-time camera feed with AI-powered wall detection
+- TensorFlow.js + BodyPix segmentation model
+- Automatic free space detection (avoids people/objects)
+- Dynamic artwork positioning
+- Adjustable size with live preview
+- Progressive loading: ~3-5 seconds first time, < 1 second cached
+- Works on mobile and desktop (requires camera access)
+
+**Phase 1 (MVP - Current):**
+- ✅ Camera access with environment-facing camera
+- ✅ BodyPix segmentation for person/object detection
+- ✅ Grid-based region analysis (10x10)
+- ✅ Free space detection with center preference
+- ✅ Flat artwork overlay with realistic shadows
+- ✅ Adjustable size controls
+- ✅ Capture/download functionality
+- ⏱️ ~100ms per frame processing
+
+**Future Phases:**
+- Phase 2: Depth estimation for realistic sizing based on distance
+- Phase 3: 3D perspective transform and dynamic shadows based on lighting
+
 ## 🛠️ Development
 
 Built with modern web standards and Shopify best practices.
@@ -95,6 +127,13 @@ sudo sysctl -p
 - `assets/variant-image-filter.js` - Image filtering functionality
 - `blocks/product-stories.liquid` - Instagram-style stories viewer
 - `assets/product-stories.js` - Stories viewer functionality
+- `snippets/wall-preview-modal.liquid` - Photo mode wall preview
+- `assets/wall-preview.js` - Photo mode drag & drop functionality
+- `assets/wall-preview.css` - Photo mode styles
+- `snippets/wall-preview-ar-modal.liquid` - AR mode interface
+- `assets/wall-preview-ar.js` - AR mode with TensorFlow.js ML
+- `assets/wall-preview-ar.css` - AR mode styles
+- `blocks/_product-media-gallery.liquid` - Integrated wall preview buttons
 
 ## 📝 Usage
 
@@ -109,6 +148,30 @@ Add the "Product Stories" block to your product page through the theme editor to
 
 ### Hiding Videos from Gallery
 In the theme editor, go to the "Product Media" block settings and enable "Hide videos from gallery" to remove videos from the main image carousel. This is useful when using the Product Stories block to display videos separately.
+
+### Wall Preview System
+The wall preview system appears automatically for products tagged with "cuadro". Two buttons will be displayed below the product gallery:
+
+**To use Modo Foto:**
+1. Click "Modo Foto" button
+2. Upload a photo of your wall
+3. Drag the artwork to position it
+4. Use the size slider to adjust dimensions
+5. Click capture to download the preview
+
+**To use Modo AR:**
+1. Click "Modo AR" button
+2. Grant camera access when prompted
+3. Wait for AI models to load (~3-5 seconds first time)
+4. Point camera at a wall
+5. AI will automatically detect free space and place artwork
+6. Use +/- buttons to adjust size
+7. Click capture to save the AR view
+
+**Requirements:**
+- Product must have "cuadro" tag
+- For AR mode: Modern browser with camera support (Chrome, Safari, Firefox)
+- For AR mode: HTTPS connection (required by browsers for camera access)
 
 ---
 

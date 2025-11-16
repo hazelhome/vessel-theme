@@ -1,0 +1,65 @@
+<div class="ar-modal" data-ar-modal>
+  <video class="ar-modal__video" data-ar-video autoplay playsinline></video>
+  <canvas class="ar-modal__canvas" data-ar-canvas></canvas>
+  
+  <div class="ar-modal__header">
+    <button class="ar-modal__close" data-ar-close aria-label="Cerrar">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="ar-modal__loading" data-ar-loading>
+    <div class="ar-modal__loading-spinner"></div>
+    <div class="ar-modal__loading-text">Cargando modelos IA...</div>
+    <div class="ar-modal__loading-progress" data-ar-progress>0%</div>
+  </div>
+
+  <div class="ar-modal__help-text" data-ar-help style="display: none;">
+    Apunta a una pared
+  </div>
+
+  <div class="ar-modal__info" data-ar-info style="display: none;">
+    <div class="ar-modal__info-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+      </svg>
+      <span data-ar-distance>-- m</span>
+    </div>
+  </div>
+
+  <div class="ar-modal__controls" data-ar-controls style="display: none;">
+    <button class="ar-modal__control-btn" data-ar-size-down aria-label="Reducir tamaño">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+    
+    <button class="ar-modal__control-btn ar-modal__control-btn--primary" data-ar-capture aria-label="Capturar">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="6"></circle>
+      </svg>
+    </button>
+    
+    <button class="ar-modal__control-btn" data-ar-size-up aria-label="Aumentar tamaño">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+    </button>
+  </div>
+
+  <div class="ar-modal__error" data-ar-error style="display: none;">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="15" y1="9" x2="9" y2="15"></line>
+      <line x1="9" y1="9" x2="15" y2="15"></line>
+    </svg>
+    <div class="ar-modal__error-text" data-ar-error-text"></div>
+    <button class="ar-modal__error-retry" data-ar-retry>Reintentar</button>
+  </div>
+</div>
+

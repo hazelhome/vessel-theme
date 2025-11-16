@@ -1,0 +1,320 @@
+/* AR Modal */
+.ar-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background: #000;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ar-modal.active {
+  display: block;
+  opacity: 1;
+}
+
+.ar-modal__video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ar-modal__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.ar-modal__header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 10;
+}
+
+.ar-modal__close {
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.ar-modal__close:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
+}
+
+.ar-modal__loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 20;
+}
+
+.ar-modal__loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ar-spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes ar-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ar-modal__loading-text {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.ar-modal__loading-progress {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.ar-modal__help-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 20px 32px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  z-index: 5;
+}
+
+.ar-modal__info {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.ar-modal__info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+.ar-modal__info-item svg {
+  flex-shrink: 0;
+}
+
+.ar-modal__controls {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 10;
+}
+
+.ar-modal__control-btn {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.ar-modal__control-btn--primary {
+  width: 72px;
+  height: 72px;
+  background: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ar-modal__control-btn:hover {
+  transform: scale(1.05);
+}
+
+.ar-modal__control-btn:active {
+  transform: scale(0.95);
+}
+
+.ar-modal__error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 20;
+  max-width: 80%;
+}
+
+.ar-modal__error svg {
+  color: #ff4444;
+  margin-bottom: 16px;
+}
+
+.ar-modal__error-text {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.ar-modal__error-retry {
+  background: white;
+  color: #1a1a1a;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ar-modal__error-retry:hover {
+  transform: scale(1.05);
+}
+
+@media screen and (max-width: 749px) {
+  .ar-modal__header {
+    padding: 16px;
+  }
+
+  .ar-modal__close {
+    width: 40px;
+    height: 40px;
+  }
+
+  .ar-modal__help-text {
+    font-size: 18px;
+    padding: 16px 24px;
+  }
+
+  .ar-modal__controls {
+    bottom: 30px;
+    gap: 16px;
+  }
+
+  .ar-modal__control-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .ar-modal__control-btn--primary {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* Wall Preview Buttons Container */
+.wall-preview-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+.wall-preview-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.wall-preview-btn:hover {
+  background: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.wall-preview-btn svg {
+  flex-shrink: 0;
+}
+
+.wall-preview-btn .badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media screen and (max-width: 749px) {
+  .wall-preview-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .wall-preview-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+
