@@ -4,19 +4,25 @@ class ARWallPreview {
     this.video = null;
     this.canvas = null;
     this.ctx = null;
-    this.segmentationModel = null;
     this.artworkImage = null;
     this.artworkAspectRatio = 1;
     this.isActive = false;
-    this.isProcessing = false;
-    this.processingInterval = null;
     this.stream = null;
-    this.artworkScale = 0.25;
-    this.lastRegion = null;
-    this.regionStability = 0;
-    this.stablePositionX = null;
-    this.stablePositionY = null;
-    this.framesWithoutDetection = 0;
+    this.artworkScale = 0.3;
+    
+    // Position tracking
+    this.artworkX = null;
+    this.artworkY = null;
+    this.targetX = null;
+    this.targetY = null;
+    this.velocity = { x: 0, y: 0 };
+    
+    // Touch controls
+    this.isDragging = false;
+    this.touchStartX = 0;
+    this.touchStartY = 0;
+    this.lastTouchX = 0;
+    this.lastTouchY = 0;
     
     this.init();
   }
@@ -71,7 +77,7 @@ class ARWallPreview {
     
     if (sizeDownBtn) {
       sizeDownBtn.addEventListener('click', () => {
-        this.artworkScale = Math.max(this.artworkScale - 0.05, 0.1);
+        this.artworkScale = Math.max(this.artworkScale - 0.05, 0.15);
       });
     }
     
@@ -83,11 +89,112 @@ class ARWallPreview {
       retryBtn.addEventListener('click', () => this.retry());
     }
     
+    // Touch controls para mover el cuadro
+    this.canvas.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: false });
+    this.canvas.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
+    this.canvas.addEventListener('touchend', this.handleTouchEnd.bind(this));
+    
+    // Mouse controls para desktop
+    this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
+    this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+    this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+    
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.isActive) {
         this.close();
       }
     });
+  }
+
+  handleTouchStart(e) {
+    if (!this.artworkX) return;
+    
+    const touch = e.touches[0];
+    const rect = this.canvas.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) * (this.canvas.width / rect.width);
+    const y = (touch.clientY - rect.top) * (this.canvas.height / rect.height);
+    
+    const size = this.canvas.width * this.artworkScale;
+    const halfWidth = size / 2;
+    const halfHeight = (size * this.artworkAspectRatio) / 2;
+    
+    if (x >= this.artworkX - halfWidth && x <= this.artworkX + halfWidth &&
+        y >= this.artworkY - halfHeight && y <= this.artworkY + halfHeight) {
+      this.isDragging = true;
+      this.touchStartX = x;
+      this.touchStartY = y;
+      this.lastTouchX = x;
+      this.lastTouchY = y;
+      e.preventDefault();
+    }
+  }
+
+  handleTouchMove(e) {
+    if (!this.isDragging) return;
+    
+    const touch = e.touches[0];
+    const rect = this.canvas.getBoundingClientRect();
+    const x = (touch.clientX - rect.left) * (this.canvas.width / rect.width);
+    const y = (touch.clientY - rect.top) * (this.canvas.height / rect.height);
+    
+    const deltaX = x - this.lastTouchX;
+    const deltaY = y - this.lastTouchY;
+    
+    this.artworkX += deltaX;
+    this.artworkY += deltaY;
+    this.targetX = this.artworkX;
+    this.targetY = this.artworkY;
+    
+    this.lastTouchX = x;
+    this.lastTouchY = y;
+    
+    e.preventDefault();
+  }
+
+  handleTouchEnd(e) {
+    this.isDragging = false;
+  }
+
+  handleMouseDown(e) {
+    if (!this.artworkX) return;
+    
+    const rect = this.canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+    
+    const size = this.canvas.width * this.artworkScale;
+    const halfWidth = size / 2;
+    const halfHeight = (size * this.artworkAspectRatio) / 2;
+    
+    if (x >= this.artworkX - halfWidth && x <= this.artworkX + halfWidth &&
+        y >= this.artworkY - halfHeight && y <= this.artworkY + halfHeight) {
+      this.isDragging = true;
+      this.lastTouchX = x;
+      this.lastTouchY = y;
+    }
+  }
+
+  handleMouseMove(e) {
+    if (!this.isDragging) return;
+    
+    const rect = this.canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (this.canvas.width / rect.width);
+    const y = (e.clientY - rect.top) * (this.canvas.height / rect.height);
+    
+    const deltaX = x - this.lastTouchX;
+    const deltaY = y - this.lastTouchY;
+    
+    this.artworkX += deltaX;
+    this.artworkY += deltaY;
+    this.targetX = this.artworkX;
+    this.targetY = this.artworkY;
+    
+    this.lastTouchX = x;
+    this.lastTouchY = y;
+  }
+
+  handleMouseUp(e) {
+    this.isDragging = false;
   }
 
   async open(productImageURL, productTitle) {
@@ -99,16 +206,19 @@ class ARWallPreview {
       this.showLoading();
       
       await this.loadArtwork(productImageURL);
-      
       await this.setupCamera();
       
-      await this.loadModels();
+      // Inicializar posición central
+      this.artworkX = this.canvas.width / 2;
+      this.artworkY = this.canvas.height / 2;
+      this.targetX = this.artworkX;
+      this.targetY = this.artworkY;
       
       this.hideLoading();
-      this.showHelp();
       this.showControls();
+      this.showInfo();
       
-      this.startProcessing();
+      this.startRendering();
       
     } catch (error) {
       console.error('Error opening AR:', error);
@@ -139,8 +249,8 @@ class ARWallPreview {
       const constraints = {
         video: {
           facingMode: 'environment',
-          width: { ideal: 640 },
-          height: { ideal: 480 }
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         }
       };
       
@@ -163,209 +273,138 @@ class ARWallPreview {
     }
   }
 
-  async loadModels() {
-    try {
-      this.updateProgress('Preparando...', 100);
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error('Init error:', error);
-      throw new Error('MODEL_LOAD_FAILED');
-    }
-  }
-
-  async detectFreeSpace() {
-    if (!this.segmentationModel || !this.video.readyState === 4) {
-      return null;
-    }
-    
-    try {
-      const segmentation = await this.segmentationModel.segmentPerson(this.video, {
-        flipHorizontal: false,
-        internalResolution: 'low',
-        segmentationThreshold: 0.6
-      });
+  startRendering() {
+    const render = () => {
+      if (!this.isActive) return;
       
-      const regions = this.createGrid(6, 6);
-      
-      const bestRegion = this.findBestRegion(regions, segmentation);
-      
-      return bestRegion;
-      
-    } catch (error) {
-      console.error('Segmentation error:', error);
-      return null;
-    }
-  }
-
-  createGrid(rows, cols) {
-    const regions = [];
-    const regionWidth = this.canvas.width / cols;
-    const regionHeight = this.canvas.height / rows;
-    
-    for (let row = 0; row < rows; row++) {
-      for (let col = 0; col < cols; col++) {
-        regions.push({
-          x: col * regionWidth,
-          y: row * regionHeight,
-          width: regionWidth,
-          height: regionHeight,
-          row,
-          col
-        });
-      }
-    }
-    
-    return regions;
-  }
-
-  findBestRegion(regions, segmentation) {
-    const pixels = segmentation.data;
-    const width = segmentation.width;
-    const height = segmentation.height;
-    
-    let bestRegion = null;
-    let bestScore = 0;
-    
-    regions.forEach(region => {
-      const scaleX = width / this.canvas.width;
-      const scaleY = height / this.canvas.height;
-      
-      const startX = Math.floor(region.x * scaleX);
-      const startY = Math.floor(region.y * scaleY);
-      const endX = Math.floor((region.x + region.width) * scaleX);
-      const endY = Math.floor((region.y + region.height) * scaleY);
-      
-      let backgroundPixels = 0;
-      let totalPixels = 0;
-      
-      for (let y = startY; y < endY; y++) {
-        for (let x = startX; x < endX; x++) {
-          const index = y * width + x;
-          if (pixels[index] === 0) {
-            backgroundPixels++;
-          }
-          totalPixels++;
-        }
+      // Smooth interpolation
+      if (this.targetX !== null) {
+        const smoothing = 0.15;
+        this.artworkX += (this.targetX - this.artworkX) * smoothing;
+        this.artworkY += (this.targetY - this.artworkY) * smoothing;
       }
       
-      const backgroundPercent = backgroundPixels / totalPixels;
-      
-      const centerBonus = this.calculateCenterBonus(region);
-      
-      const minSize = region.width > this.canvas.width * 0.15 && 
-                     region.height > this.canvas.height * 0.15 ? 1 : 0.5;
-      
-      const score = backgroundPercent * 0.7 + centerBonus * 0.2 + minSize * 0.1;
-      
-      if (score > bestScore) {
-        bestScore = score;
-        bestRegion = region;
-      }
-    });
-    
-    return bestRegion;
-  }
-
-  calculateCenterBonus(region) {
-    const centerX = this.canvas.width / 2;
-    const centerY = this.canvas.height / 2;
-    
-    const regionCenterX = region.x + region.width / 2;
-    const regionCenterY = region.y + region.height / 2;
-    
-    const distanceX = Math.abs(regionCenterX - centerX) / (this.canvas.width / 2);
-    const distanceY = Math.abs(regionCenterY - centerY) / (this.canvas.height / 2);
-    
-    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-    
-    return 1 - Math.min(distance, 1);
-  }
-
-  async renderFrame() {
-    if (!this.isActive || this.isProcessing) return;
-    
-    this.isProcessing = true;
-    
-    try {
+      // Clear and draw video
       this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
       
-      if (this.stablePositionX === null) {
-        this.stablePositionX = this.canvas.width / 2;
-        this.stablePositionY = this.canvas.height / 2;
+      // Draw artwork with effects
+      if (this.artworkX !== null) {
+        this.drawArtworkWithEffects();
       }
       
-      this.hideHelp();
-      
-      const size = this.canvas.width * this.artworkScale;
-      
-      this.drawShadow(this.stablePositionX, this.stablePositionY, size);
-      
-      this.ctx.drawImage(
-        this.artworkImage,
-        this.stablePositionX - size / 2,
-        this.stablePositionY - size / 2,
-        size,
-        size * this.artworkAspectRatio
-      );
-      
-    } catch (error) {
-      console.error('Render error:', error);
-    } finally {
-      this.isProcessing = false;
-    }
-  }
-  
-  isSimilarRegion(region1, region2) {
-    if (!region1 || !region2) return false;
+      requestAnimationFrame(render);
+    };
     
-    const threshold = 100;
-    const xDiff = Math.abs(region1.x - region2.x);
-    const yDiff = Math.abs(region1.y - region2.y);
-    
-    return xDiff < threshold && yDiff < threshold;
+    render();
   }
 
-  drawShadow(centerX, centerY, size) {
+  drawArtworkWithEffects() {
+    const size = this.canvas.width * this.artworkScale;
+    const width = size;
+    const height = size * this.artworkAspectRatio;
+    
     this.ctx.save();
     
-    const shadowBlur = 15;
-    const shadowOffsetX = 5;
-    const shadowOffsetY = 5;
+    // Shadow layers para profundidad
+    this.drawMultiLayerShadow(this.artworkX, this.artworkY, width, height);
     
-    this.ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-    this.ctx.shadowBlur = shadowBlur;
-    this.ctx.shadowOffsetX = shadowOffsetX;
-    this.ctx.shadowOffsetY = shadowOffsetY;
+    // Border/frame efecto
+    this.ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+    this.ctx.shadowBlur = 20;
+    this.ctx.shadowOffsetX = 5;
+    this.ctx.shadowOffsetY = 5;
     
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    this.ctx.fillRect(
-      centerX - size / 2,
-      centerY - size / 2,
-      size,
-      size * this.artworkAspectRatio
+    // Artwork
+    this.ctx.drawImage(
+      this.artworkImage,
+      this.artworkX - width / 2,
+      this.artworkY - height / 2,
+      width,
+      height
+    );
+    
+    // Frame effect
+    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    this.ctx.lineWidth = 2;
+    this.ctx.strokeRect(
+      this.artworkX - width / 2,
+      this.artworkY - height / 2,
+      width,
+      height
+    );
+    
+    // Inner shadow para profundidad
+    this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+    this.ctx.lineWidth = 1;
+    this.ctx.strokeRect(
+      this.artworkX - width / 2 + 3,
+      this.artworkY - height / 2 + 3,
+      width - 6,
+      height - 6
     );
     
     this.ctx.restore();
-  }
-
-  startProcessing() {
-    this.processingInterval = setInterval(() => {
-      this.renderFrame();
-    }, 50);
-  }
-
-  stopProcessing() {
-    if (this.processingInterval) {
-      clearInterval(this.processingInterval);
-      this.processingInterval = null;
+    
+    // Indicador visual cuando se arrastra
+    if (this.isDragging) {
+      this.drawDragIndicator();
     }
+  }
+
+  drawMultiLayerShadow(x, y, width, height) {
+    // Capa 1: Sombra difusa lejana
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    this.ctx.fillRect(
+      x - width / 2 + 15,
+      y - height / 2 + 15,
+      width,
+      height
+    );
+    
+    // Capa 2: Sombra media
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+    this.ctx.fillRect(
+      x - width / 2 + 10,
+      y - height / 2 + 10,
+      width,
+      height
+    );
+    
+    // Capa 3: Sombra cercana
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    this.ctx.fillRect(
+      x - width / 2 + 5,
+      y - height / 2 + 5,
+      width,
+      height
+    );
+  }
+
+  drawDragIndicator() {
+    this.ctx.save();
+    this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+    this.ctx.lineWidth = 3;
+    this.ctx.setLineDash([10, 5]);
+    
+    const size = this.canvas.width * this.artworkScale;
+    const width = size;
+    const height = size * this.artworkAspectRatio;
+    
+    this.ctx.strokeRect(
+      this.artworkX - width / 2 - 5,
+      this.artworkY - height / 2 - 5,
+      width + 10,
+      height + 10
+    );
+    
+    this.ctx.restore();
   }
 
   capture() {
     const dataURL = this.canvas.toDataURL('image/png');
     
     const link = document.createElement('a');
-    link.download = 'artwork-preview.png';
+    link.download = 'artwork-ar-preview.png';
     link.href = dataURL;
     link.click();
   }
@@ -377,7 +416,6 @@ class ARWallPreview {
 
   close() {
     this.isActive = false;
-    this.stopProcessing();
     
     if (this.stream) {
       this.stream.getTracks().forEach(track => track.stop());
@@ -390,6 +428,11 @@ class ARWallPreview {
     if (this.ctx) {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+    
+    this.artworkX = null;
+    this.artworkY = null;
+    this.targetX = null;
+    this.targetY = null;
   }
 
   showLoading() {
@@ -402,24 +445,6 @@ class ARWallPreview {
     if (loading) loading.style.display = 'none';
   }
 
-  updateProgress(text, percent) {
-    const loadingText = document.querySelector('.ar-modal__loading-text');
-    const progress = document.querySelector('[data-ar-progress]');
-    
-    if (loadingText) loadingText.textContent = text;
-    if (progress) progress.textContent = `${Math.round(percent)}%`;
-  }
-
-  showHelp() {
-    const help = document.querySelector('[data-ar-help]');
-    if (help) help.style.display = 'block';
-  }
-
-  hideHelp() {
-    const help = document.querySelector('[data-ar-help]');
-    if (help) help.style.display = 'none';
-  }
-
   showControls() {
     const controls = document.querySelector('[data-ar-controls]');
     if (controls) controls.style.display = 'flex';
@@ -428,6 +453,15 @@ class ARWallPreview {
   hideControls() {
     const controls = document.querySelector('[data-ar-controls]');
     if (controls) controls.style.display = 'none';
+  }
+
+  showInfo() {
+    const info = document.querySelector('[data-ar-info]');
+    if (info) {
+      info.style.display = 'block';
+      const helpText = info.querySelector('.ar-modal__info-item span');
+      if (helpText) helpText.textContent = 'Arrastra el cuadro';
+    }
   }
 
   showError(message) {
@@ -451,7 +485,6 @@ class ARWallPreview {
     
     const messages = {
       'CAMERA_DENIED': 'No se pudo acceder a la cámara. Por favor, permite el acceso en la configuración de tu navegador.',
-      'MODEL_LOAD_FAILED': 'Error al cargar el modelo de IA. Verifica tu conexión a internet.',
       'default': 'Ocurrió un error. Por favor, intenta de nuevo.'
     };
     
@@ -460,4 +493,3 @@ class ARWallPreview {
 }
 
 new ARWallPreview();
-
