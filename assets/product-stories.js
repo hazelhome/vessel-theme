@@ -8,7 +8,9 @@ class ProductStories {
     this.closeTriggers = Array.from(container.querySelectorAll('[data-close-modal]'));
     this.currentIndex = 0;
     this.isPlaying = false;
-    this.duration = 5000; // 5 seconds per story
+    this.modalIsOpen = false;
+    this.hasPlayedOnce = false;
+    this.duration = 5000;
     this.progressInterval = null;
     this.currentVideo = null;
     
@@ -48,6 +50,7 @@ class ProductStories {
 
   openModal(index = 0) {
     this.modal.classList.add('active');
+    this.modalIsOpen = true;
     document.body.style.overflow = 'hidden';
     
     // Bajar z-index de TODOS los headers y elementos sticky
@@ -70,6 +73,8 @@ class ProductStories {
 
   closeModal() {
     this.pause();
+    this.modalIsOpen = false;
+    this.hasPlayedOnce = false;
     this.modal.classList.remove('active');
     document.body.style.overflow = '';
     
@@ -138,11 +143,6 @@ class ProductStories {
     this.stories.forEach((story, index) => {
       const deferredMedia = story.querySelector('deferred-media');
       if (deferredMedia) {
-        // Auto-load first video
-        if (index === 0) {
-          this.loadDeferredMedia(deferredMedia);
-        }
-
         const video = this.getVideoElement(story);
         if (video) {
           video.addEventListener('ended', () => {
@@ -164,6 +164,8 @@ class ProductStories {
 
   showStory(index) {
     if (index < 0 || index >= this.stories.length) return;
+
+    const wasPlaying = this.isPlaying;
 
     // Stop current video
     this.pause();
@@ -189,29 +191,29 @@ class ProductStories {
     if (deferredMedia) {
       this.loadDeferredMedia(deferredMedia);
       
-      // Bandera para evitar múltiples reproducciones
-      if (this.loadingVideo) return;
-      this.loadingVideo = true;
-      
-      // Esperar a que el video se cargue y reproducir UNA SOLA VEZ
-      setTimeout(() => {
-        const video = this.getVideoElement(story);
-        if (video && video.readyState >= 2) {
-          // Video ya está listo, reproducir desde el inicio
-          this.loadingVideo = false;
-          this.play(true);
-        } else if (video) {
-          // Esperar a que se cargue
-          video.addEventListener('loadeddata', () => {
+      // SOLO reproducir si el modal está explícitamente abierto
+      if (this.modalIsOpen && (wasPlaying || !this.hasPlayedOnce)) {
+        if (this.loadingVideo) return;
+        this.loadingVideo = true;
+        this.hasPlayedOnce = true;
+        
+        setTimeout(() => {
+          const video = this.getVideoElement(story);
+          if (video && video.readyState >= 2) {
             this.loadingVideo = false;
-            if (this.modal && this.modal.classList.contains('active') && !this.isPlaying) {
-              this.play(true);
-            }
-          }, { once: true });
-        } else {
-          this.loadingVideo = false;
-        }
-      }, 200);
+            this.play(true);
+          } else if (video) {
+            video.addEventListener('loadeddata', () => {
+              this.loadingVideo = false;
+              if (this.modalIsOpen) {
+                this.play(true);
+              }
+            }, { once: true });
+          } else {
+            this.loadingVideo = false;
+          }
+        }, 200);
+      }
     }
   }
 
@@ -230,16 +232,15 @@ class ProductStories {
   play(restart = false) {
     // Prevenir múltiples llamadas simultáneas
     if (this.isPlaying && !restart) return;
-    if (this.playingPromise) return; // Ya hay una reproducción en curso
+    if (this.playingPromise) return;
     
     const video = this.getVideoElement(this.stories[this.currentIndex]);
     
     if (video) {
-      // Solo reiniciar si se solicita explícitamente
       if (restart) {
         video.pause();
         video.currentTime = 0;
-        video.muted = true; // Mutear para permitir autoplay solo al inicio
+        video.muted = true;
       }
       
       video.setAttribute('playsinline', '');
@@ -254,22 +255,20 @@ class ProductStories {
             this.startProgress();
             this.playingPromise = null;
             
-            // Después de empezar, intentar desmutear (solo si es restart)
-            if (restart) {
+            if (restart && video.muted) {
               setTimeout(() => {
                 video.muted = false;
               }, 100);
             }
           })
           .catch(error => {
-            console.log('Autoplay prevented:', error);
+            console.log('Play prevented:', error);
             this.isPlaying = false;
             this.updatePlayButton();
             this.playingPromise = null;
           });
       }
     } else {
-      // If no video, just start progress
       this.isPlaying = true;
       this.updatePlayButton();
       this.startProgress();
