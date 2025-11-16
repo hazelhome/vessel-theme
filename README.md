@@ -41,7 +41,7 @@ Modern Shopify theme for Hazel Home with enhanced product cards and quick add fu
 - Videos can be displayed separately in Product Stories block
 
 ### Wall Preview System (for "cuadro" tagged products)
-Two complementary modes for visualizing artwork on walls:
+Three complementary modes for visualizing artwork on walls:
 
 **Modo Foto:**
 - Upload a photo of your wall
@@ -49,34 +49,36 @@ Two complementary modes for visualizing artwork on walls:
 - Resize with slider maintaining aspect ratio
 - Download preview image
 
-**Modo AR (Live Preview):**
+**Ver en AR 🚀 (WebXR - Real AR):**
+*Professional AR experience using WebXR API - Like Instagram/Snapchat/Pokemon Go*
+- ✅ **Real plane detection** - Automatically detects walls and surfaces
+- ✅ **Persistent anchors** - Artwork stays fixed in real-world position
+- ✅ **Gyroscope tracking** - Moves with your phone naturally
+- ✅ **Hit testing** - Tap to place on detected surfaces
+- ✅ **3D rendering** with Three.js
+- ✅ **Reticle indicator** - Shows where artwork will be placed
+- ✅ **Adjustable scale** - Real-world sizing based on depth
+- ✅ **Reposition mode** - Tap to move to different wall
+- ✅ **Screenshot capture** - Save AR preview
+- ✅ **Native AR** - Uses ARCore (Android) and ARKit (iOS)
+- 🎯 **100% Free** - No API costs, open source
+- 📱 **Requirements:** Chrome 79+ (Android) or Safari 13+ (iOS)
+
+**Vista Live (Fallback Mode):**
+*Shown on devices without WebXR support*
 - Real-time camera feed with live artwork overlay
 - Drag & drop to position artwork anywhere
-- Touch and mouse support for desktop and mobile
-- Smooth animations with interpolation
+- Intelligent wall detection with color analysis
 - Multi-layer shadow effects for realistic depth
-- Adjustable size with +/- controls
-- Capture/download functionality
-- Instant load time (< 0.5s)
-- No heavy ML libraries - optimized for performance
-- 60 FPS smooth rendering with requestAnimationFrame
-- Professional gradient UI with pulsing animations
+- 60 FPS smooth rendering
+- Works on any device with camera
 
-**Features:**
-- ✅ Real-time camera access (environment-facing on mobile)
-- ✅ Drag & drop artwork positioning
-- ✅ Multi-layer shadows for depth perception
-- ✅ Smooth position interpolation
-- ✅ Frame border effects
-- ✅ Professional gradient UI
-- ✅ Touch and mouse controls
-- ✅ Size adjustment controls
-- ✅ Screenshot/download functionality
-- ⚡ 60 FPS rendering
-
-**Future Phases:**
-- Phase 2: Depth estimation for realistic sizing based on distance
-- Phase 3: 3D perspective transform and dynamic shadows based on lighting
+**Technology Stack:**
+- **WebXR Device API** - Native AR access
+- **Three.js** - 3D rendering engine
+- **ARCore/ARKit** - Platform AR capabilities
+- **Hit-test API** - Surface detection
+- **Anchors API** - Persistent tracking
 
 ## 🛠️ Development
 

@@ -269,3 +269,57 @@
   }
 }
 
+/* Wall Preview Buttons */
+.wall-preview-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 10;
+}
+
+.wall-preview-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: white;
+  border: 2px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wall-preview-btn:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.wall-preview-btn svg {
+  flex-shrink: 0;
+}
+
+.wall-preview-btn .badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 4px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
