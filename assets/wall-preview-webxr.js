@@ -248,12 +248,16 @@ class WebXRWallPreview {
 
   async startXRSession() {
     try {
-      // Request XR session
+      console.log('Requesting XR session...');
+      
+      // Request XR session with flexible features
       this.xrSession = await navigator.xr.requestSession('immersive-ar', {
-        requiredFeatures: ['hit-test', 'anchors'],
-        optionalFeatures: ['dom-overlay'],
+        requiredFeatures: ['hit-test'],
+        optionalFeatures: ['anchors', 'dom-overlay'],
         domOverlay: { root: this.modal }
       });
+      
+      console.log('XR session created successfully');
       
       // Setup renderer for XR
       await this.renderer.xr.setSession(this.xrSession);
@@ -345,18 +349,24 @@ class WebXRWallPreview {
     const frame = event.frame;
     const hitTestResults = frame.getHitTestResults(this.hitTestSource);
     
+    console.log('Select event, hit results:', hitTestResults.length);
+    
     if (hitTestResults.length > 0) {
       const hit = hitTestResults[0];
       const hitPose = hit.getPose(this.xrRefSpace);
       
       if (hitPose) {
-        // Create anchor at hit position
+        console.log('Hit pose found, placing artwork');
+        
+        // Try to create anchor (optional feature, might not be supported)
         if (this.xrSession.createAnchor) {
           try {
             const anchor = await this.xrSession.createAnchor(
               hitPose.transform,
               this.xrRefSpace
             );
+            
+            console.log('Anchor created successfully');
             
             // Remove old anchor if exists
             if (this.artworkAnchor) {
@@ -365,31 +375,33 @@ class WebXRWallPreview {
             
             this.artworkAnchor = anchor;
             
-            // Show artwork at anchor position
-            this.artworkMesh.visible = true;
-            this.artworkMesh.matrix.fromArray(hitPose.transform.matrix);
-            
-            // Rotate to face camera (perpendicular to wall)
-            const matrix = new THREE.Matrix4().fromArray(hitPose.transform.matrix);
-            const normal = new THREE.Vector3(0, 0, 1);
-            normal.applyMatrix4(matrix);
-            
-            // Adjust rotation so artwork faces outward from wall
-            this.artworkMesh.rotation.x = 0;
-            
-            this.isPlaced = true;
-            this.hasEverPlaced = true;
-            this.reticle.visible = false;
-            
-            this.hideInfo();
-            this.showInfo('Cuadro colocado! Usa los botones para ajustar');
-            
-            setTimeout(() => this.hideInfo(), 3000);
-            
           } catch (error) {
-            console.error('Error creating anchor:', error);
+            console.error('Error creating anchor (will place without anchor):', error);
+            this.artworkAnchor = null;
           }
+        } else {
+          console.log('Anchors not supported, placing without anchor');
         }
+        
+        // Show artwork at hit position (works with or without anchor)
+        this.artworkMesh.visible = true;
+        this.artworkMesh.matrix.fromArray(hitPose.transform.matrix);
+        
+        // Store position for manual tracking if no anchor
+        if (!this.artworkAnchor) {
+          this.artworkMesh.position.setFromMatrixPosition(this.artworkMesh.matrix);
+          this.artworkMesh.quaternion.setFromRotationMatrix(this.artworkMesh.matrix);
+          this.artworkMesh.matrixAutoUpdate = true;
+        }
+        
+        this.isPlaced = true;
+        this.hasEverPlaced = true;
+        this.reticle.visible = false;
+        
+        this.hideInfo();
+        this.showInfo('¡Cuadro colocado! Usa los botones para ajustar');
+        
+        setTimeout(() => this.hideInfo(), 3000);
       }
     }
   }
