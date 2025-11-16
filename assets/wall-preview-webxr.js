@@ -250,21 +250,24 @@ class WebXRWallPreview {
     try {
       console.log('Requesting XR session...');
       
-      // Request XR session with flexible features
+      // Request XR session with minimal requirements
       this.xrSession = await navigator.xr.requestSession('immersive-ar', {
         requiredFeatures: ['hit-test'],
-        optionalFeatures: ['anchors', 'dom-overlay'],
-        domOverlay: { root: this.modal }
+        optionalFeatures: ['anchors']
       });
       
       console.log('XR session created successfully');
       
+      // Append canvas to container BEFORE setting session
+      this.container.innerHTML = '';
+      this.container.appendChild(this.renderer.domElement);
+      
+      console.log('Canvas appended, setting XR session on renderer...');
+      
       // Setup renderer for XR
       await this.renderer.xr.setSession(this.xrSession);
       
-      // Append canvas to container
-      this.container.innerHTML = '';
-      this.container.appendChild(this.renderer.domElement);
+      console.log('Renderer XR session set successfully');
       
       // Get reference space
       this.xrRefSpace = await this.xrSession.requestReferenceSpace('local-floor');
@@ -291,6 +294,7 @@ class WebXRWallPreview {
       
     } catch (error) {
       console.error('Error starting XR session:', error);
+      console.error('Error details:', error.name, error.message, error.code);
       throw new Error('XR_SESSION_FAILED');
     }
   }
