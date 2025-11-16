@@ -111,18 +111,26 @@
           
           let isXRSupported = false;
           
+          // Check WebXR support
           if ('xr' in navigator) {
             try {
               isXRSupported = await navigator.xr.isSessionSupported('immersive-ar');
+              console.log('WebXR AR support:', isXRSupported);
             } catch (e) {
+              console.log('WebXR check error:', e);
               isXRSupported = false;
             }
+          } else {
+            console.log('navigator.xr not available');
           }
           
+          // Always show fallback button, hide WebXR if not supported
           if (isXRSupported) {
+            console.log('Showing WebXR button');
             webxrBtn.style.display = 'flex';
             fallbackBtn.style.display = 'none';
           } else {
+            console.log('Showing fallback button');
             webxrBtn.style.display = 'none';
             fallbackBtn.style.display = 'flex';
           }

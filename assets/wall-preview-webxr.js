@@ -216,8 +216,11 @@ class WebXRWallPreview {
 
   async open(productImageURL, productTitle) {
     try {
+      console.log('WebXR open called, isXRSupported:', this.isXRSupported);
+      
       if (!this.isXRSupported) {
-        this.showError('AR no está disponible en este dispositivo. Necesitas un dispositivo compatible con ARCore (Android 7+) o ARKit (iOS 13+).');
+        console.log('WebXR not supported, showing error');
+        this.showError('Tu dispositivo no soporta AR avanzada. Usa "Vista Live" en su lugar para una experiencia similar.');
         return;
       }
       
@@ -517,8 +520,8 @@ class WebXRWallPreview {
     const errorCode = error.message;
     
     const messages = {
-      'XR_SESSION_FAILED': 'No se pudo iniciar la sesión AR. Asegúrate de estar usando Chrome o Safari en un dispositivo compatible.',
-      'default': 'Ocurrió un error. Por favor, intenta de nuevo.'
+      'XR_SESSION_FAILED': 'No se pudo iniciar AR. Tu dispositivo necesita Google ARCore instalado y habilitado. Prueba "Vista Live" en su lugar.',
+      'default': 'Ocurrió un error. Prueba con "Vista Live" para una experiencia similar.'
     };
     
     return messages[errorCode] || messages['default'];
