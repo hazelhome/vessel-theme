@@ -11,9 +11,6 @@
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
       })(window,document,'script','dataLayer','GTM-52RMPFNP');</script>
     <!-- End Google Tag Manager -->
-    <!-- Metricool -->
-    <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"a2128ad5b53ee75cb134270b899aec5"})});</script>
-    <!-- End Metricool -->
 
     {%- if settings.favicon != blank -%}
       <link
@@ -54,6 +51,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="header-group">
       {% sections 'header-group' %}
     </div>
+    <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"a2128ad5b53ee75cb134270b899aec5"})});</script>
 
     <script
       src="{{ 'critical.js' | asset_url }}"
