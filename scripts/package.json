@@ -1,0 +1,13 @@
+{
+  "name": "hazelhome-glb-generator",
+  "version": "1.0.0",
+  "description": "Generador de modelos 3D GLB para productos de HazelHome",
+  "type": "module",
+  "scripts": {
+    "generate": "node generate-artwork-glbs-simple.js"
+  },
+  "dependencies": {
+    "three": "^0.159.0"
+  }
+}
+

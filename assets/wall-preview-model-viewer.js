@@ -84,13 +84,43 @@ class ModelViewerARPreview {
       this.showLoading();
       this.currentProductImage = productImageURL;
       
-      // Generate GLB model with the artwork texture
-      await this.generateArtworkModel(productImageURL);
+      // Check if product has pre-generated GLB
+      const productId = this.getProductIdFromURL();
+      const preGeneratedGLB = productId ? this.getPreGeneratedGLBURL(productId) : null;
+      
+      if (preGeneratedGLB) {
+        console.log('Using pre-generated GLB:', preGeneratedGLB);
+        this.modelViewer.src = preGeneratedGLB;
+        this.modelViewer.poster = productImageURL;
+        this.hideLoading();
+      } else {
+        console.log('No pre-generated GLB found, generating on-the-fly...');
+        // Fallback: Generate GLB model with the artwork texture
+        await this.generateArtworkModel(productImageURL);
+      }
       
     } catch (error) {
       console.error('Error opening Model Viewer AR:', error);
       this.showError('Ocurrió un error al cargar la vista AR.');
     }
+  }
+  
+  getProductIdFromURL() {
+    // Extract product ID from URL (e.g., /products/my-product -> handle)
+    const match = window.location.pathname.match(/\/products\/([^\/]+)/);
+    return match ? match[1] : null;
+  }
+  
+  getPreGeneratedGLBURL(productHandle) {
+    // Check if GLB exists in Shopify Files
+    // You'll need to configure this URL pattern after uploading the GLBs
+    const cdnUrl = `https://cdn.shopify.com/s/files/1/YOUR_SHOP_ID/files/artwork-${productHandle}.glb`;
+    
+    // Or use metafields if you stored the URL there
+    // const metafieldGLB = window.product?.metafields?.custom?.ar_model_url;
+    // return metafieldGLB;
+    
+    return null; // Return null for now, will be configured after GLB upload
   }
 
   async generateArtworkModel(imageURL) {
