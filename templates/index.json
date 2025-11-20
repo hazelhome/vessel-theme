@@ -78,10 +78,74 @@
             "padding-inline-end": 0
           },
           "blocks": {}
+        },
+        "slide_7NAW4F": {
+          "type": "_slide",
+          "settings": {
+            "media_type_1": "image",
+            "image_1": "shopify://shop_images/banners-15.jpg",
+            "custom_mobile_media": true,
+            "media_type_1_mobile": "image",
+            "image_1_mobile": "shopify://shop_images/banners-16.jpg",
+            "link": "https://www.hazelhome.cl/collections/all",
+            "open_in_new_tab": false,
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "slide_kRDUaM": {
+          "type": "_slide",
+          "settings": {
+            "media_type_1": "image",
+            "image_1": "shopify://shop_images/banners-11.jpg",
+            "custom_mobile_media": true,
+            "media_type_1_mobile": "image",
+            "image_1_mobile": "shopify://shop_images/banners-12.jpg",
+            "link": "https://www.hazelhome.cl/collections/ilustracion",
+            "open_in_new_tab": false,
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         }
       },
       "block_order": [
-        "slide_8YgJiH"
+        "slide_8YgJiH",
+        "slide_7NAW4F",
+        "slide_kRDUaM"
       ],
       "name": "t:names.slideshow",
       "settings": {
