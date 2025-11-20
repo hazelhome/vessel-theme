@@ -22,6 +22,12 @@
           --product-grid-columns-desktop: repeat(auto-fill, minmax({{ product_card_size }}, 1fr));
         }
 
+        @container product-grid (min-width: calc({{ product_card_size }} * 4 + {{ section.settings.columns_gap_horizontal }}px * 3)) {
+          .product-grid--{{ section.id }}:is(.product-grid--grid) {
+            --product-grid-columns-desktop: repeat(4, 1fr);
+          }
+        }
+
 
       {% when 'organic' %}
         {% assign large_span = 2 %}
