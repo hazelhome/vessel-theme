@@ -799,10 +799,10 @@
           "name": "t:names.collection_card",
           "static": true,
           "settings": {
-            "placement": "on_image",
-            "horizontal_alignment": "flex-start",
+            "placement": "below_image",
+            "horizontal_alignment": "center",
             "vertical_alignment": "flex-end",
-            "collection_card_gap": 8,
+            "collection_card_gap": 25,
             "inherit_color_scheme": true,
             "color_scheme": "",
             "border": "none",
