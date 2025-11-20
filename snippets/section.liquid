@@ -53,6 +53,7 @@
         layout-panel-flex--{{ section.settings.content_direction }}
         section-content-wrapper
         {% if section.settings.vertical_on_mobile %} mobile-column{% endif %}
+        {% if section.settings.content_direction == 'row' and section.settings.vertical_on_mobile == false %} horizontal-scroll-mobile{% endif %}
       "
       style="
         {% render 'layout-panel-style', settings: section.settings %}

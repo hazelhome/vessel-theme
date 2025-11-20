@@ -2359,6 +2359,60 @@ product-price.text-block:is(.h1, .h2, .h3, .h4, .h5, .h6) > *:not(.tax-note) {
       flex: 0 0 fit-content;
     }
   }
+
+  .section--page-width:has(.horizontal-scroll-mobile),
+  .section--full-width:has(.horizontal-scroll-mobile) {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-foreground-rgb) / var(--opacity-40)) transparent;
+  }
+
+  .section--page-width:has(.horizontal-scroll-mobile)::-webkit-scrollbar,
+  .section--full-width:has(.horizontal-scroll-mobile)::-webkit-scrollbar {
+    display: block;
+    height: 8px;
+  }
+
+  .section--page-width:has(.horizontal-scroll-mobile)::-webkit-scrollbar-track,
+  .section--full-width:has(.horizontal-scroll-mobile)::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  .section--page-width:has(.horizontal-scroll-mobile)::-webkit-scrollbar-thumb,
+  .section--full-width:has(.horizontal-scroll-mobile)::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-40));
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    transition: background-color 0.2s;
+  }
+
+  .section--page-width:has(.horizontal-scroll-mobile)::-webkit-scrollbar-thumb:hover,
+  .section--full-width:has(.horizontal-scroll-mobile)::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-60));
+  }
+
+  .custom-section-content:has(.horizontal-scroll-mobile) {
+    overflow: visible;
+  }
+
+  .section-content-wrapper.horizontal-scroll-mobile {
+    overflow-x: visible;
+    overflow-y: visible;
+    flex-wrap: nowrap !important;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .section-content-wrapper.horizontal-scroll-mobile > .group-block {
+    flex: 0 0 auto !important;
+    min-width: calc(100vw - 48px);
+    max-width: calc(100vw - 48px);
+    scroll-snap-align: start;
+  }
 }
 
 @media (min-width: 750px) {

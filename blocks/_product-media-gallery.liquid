@@ -109,9 +109,9 @@
         endif
         assign found_media = selected_product.media | where: 'id', media.id
         assign sorted_media = sorted_media | concat: found_media
-      endfor
-    else
-      assign sorted_media = selected_product.media
+    endfor
+  else
+    assign sorted_media = selected_product.media
     endif
   endif
   assign has_image_drop = sorted_media | has: 'media_type', 'image'
