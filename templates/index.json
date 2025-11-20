@@ -875,7 +875,7 @@
         "columns": 3,
         "mobile_columns": "1",
         "mobile_card_size": "60cqw",
-        "columns_gap": 8,
+        "columns_gap": 19,
         "bento_gap": 8,
         "rows_gap": 8,
         "max_collections": 4,
