@@ -48,15 +48,15 @@
     "slideshow_TT6GgC": {
       "type": "slideshow",
       "blocks": {
-        "slide_8YgJiH": {
+        "slide_7NAW4F": {
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/banners-13.jpg",
+            "image_1": "shopify://shop_images/banners-15.jpg",
             "custom_mobile_media": true,
             "media_type_1_mobile": "image",
-            "image_1_mobile": "shopify://shop_images/banners-14.jpg",
-            "link": "https://www.hazelhome.cl/collections/comidas",
+            "image_1_mobile": "shopify://shop_images/banners-16.jpg",
+            "link": "shopify://pages/subscribir",
             "open_in_new_tab": false,
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -79,16 +79,16 @@
           },
           "blocks": {}
         },
-        "slide_7NAW4F": {
+        "slide_8YgJiH": {
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/banners-15.jpg",
+            "image_1": "shopify://shop_images/banners-13.jpg",
             "custom_mobile_media": true,
             "media_type_1_mobile": "image",
-            "image_1_mobile": "shopify://shop_images/banners-16.jpg",
-            "link": "https://www.hazelhome.cl/collections/all",
-            "open_in_new_tab": false,
+            "image_1_mobile": "shopify://shop_images/banners-14.jpg",
+            "link": "https://www.hazelhome.cl/collections/comidas",
+            "open_in_new_tab": true,
             "content_direction": "column",
             "vertical_on_mobile": true,
             "horizontal_alignment": "flex-start",
@@ -118,7 +118,7 @@
             "custom_mobile_media": true,
             "media_type_1_mobile": "image",
             "image_1_mobile": "shopify://shop_images/banners-12.jpg",
-            "link": "https://www.hazelhome.cl/collections/ilustracion",
+            "link": "shopify://collections/ilustracion",
             "open_in_new_tab": false,
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -143,8 +143,8 @@
         }
       },
       "block_order": [
-        "slide_8YgJiH",
         "slide_7NAW4F",
+        "slide_8YgJiH",
         "slide_kRDUaM"
       ],
       "name": "t:names.slideshow",
