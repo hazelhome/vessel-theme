@@ -92,8 +92,8 @@
           "button_color": "#af480e",
           "secondary_color": "#ffeecc",
           "ternary_color": "#353a47",
-          "button_icon": "team",
-          "button_text": "live_chat",
+          "button_icon": "chat_bubble",
+          "button_text": "no_text",
           "button_horizontal_position": "bottom_right",
           "button_vertical_position": "lowest",
           "greeting_message": ""
