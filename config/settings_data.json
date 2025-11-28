@@ -78,13 +78,18 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 32,
     "variant_button_width": "default-width-buttons",
+    "subscription_popup_delay": 5,
+    "subscription_popup_discount_code": "HAZEL5MIL",
+    "subscription_popup_discount_percent": 0,
+    "subscription_popup_image": "shopify://shop_images/popup_1.jpg",
+    "subscription_popup_image_position": "right",
+    "subscription_popup_image_ratio": "portrait",
+    "subscription_popup_image_size": 60,
+    "subscription_popup_icon_type": "none",
+    "subscription_popup_heading": "Te regalamos $5.000 de descuento para tu compra",
+    "subscription_popup_disclaimer_1": "*Descuento válido por compras superiores a $50.000",
     "content_for_index": [],
     "blocks": {
-      "13768625480086291342": {
-        "type": "shopify://apps/forms/blocks/forms/8744a304-fcb1-4347-b211-bb6b4759a76a",
-        "disabled": false,
-        "settings": {}
-      },
       "15683396631634586217": {
         "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
         "disabled": false,
@@ -107,6 +112,11 @@
       "2200952712151285029": {
         "type": "shopify://apps/microsoft-clarity/blocks/brandAgents_js/31c3d126-8116-4b4a-8ba1-baeda7c4aeea",
         "disabled": false,
+        "settings": {}
+      },
+      "13768625480086291342": {
+        "type": "shopify://apps/forms/blocks/forms/8744a304-fcb1-4347-b211-bb6b4759a76a",
+        "disabled": true,
         "settings": {}
       }
     },
