@@ -216,25 +216,46 @@ class SubscriptionPopup extends DialogComponent {
     }
 
     try {
-      const formData = new FormData(form);
+      const email = emailInput.value.trim();
+      const formData = new URLSearchParams();
+      formData.append('form_type', 'customer');
+      formData.append('utf8', '✓');
+      formData.append('contact[email]', email);
+      formData.append('contact[accepts_marketing]', 'true');
       
       const response = await fetch('/contact', {
         method: 'POST',
-        body: formData,
+        body: formData.toString(),
         headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'text/html'
+        },
+        credentials: 'same-origin'
       });
 
       const html = await response.text();
+      
+      if (html.includes('Missing CAPTCHA token') || html.includes('CAPTCHA') || response.status === 422) {
+        submitButton.disabled = false;
+        submitButton.textContent = form.dataset.originalButtonText || originalText;
+        
+        form.removeEventListener('submit', this.handleFormSubmit);
+        form.action = '/contact';
+        form.method = 'POST';
+        form.submit();
+        return;
+      }
+      
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, 'text/html');
       
       const responseForm = doc.querySelector('#SubscriptionPopupForm');
-      const hasErrors = responseForm?.querySelector('.subscription-popup__message--error');
+      const errorElement = responseForm?.querySelector('.subscription-popup__message--error');
+      const hasErrors = errorElement !== null || (html.includes('error') && !html.includes('customer_posted'));
       const hasSuccess = responseForm?.querySelector('.subscription-popup__message--success') || 
                         html.includes('customer_posted') || 
-                        response.ok;
+                        (html.includes('Algo salió mal') === false && response.ok);
 
       if (hasSuccess && !hasErrors) {
         setSubscriptionStatus();
@@ -255,7 +276,13 @@ class SubscriptionPopup extends DialogComponent {
           }, 3000);
         }
       } else {
-        const errorMsg = hasErrors && hasErrors.textContent ? hasErrors.textContent.trim() : 'Error al procesar la suscripción';
+        let errorMsg = 'Error al procesar la suscripción';
+        if (errorElement instanceof HTMLElement && errorElement.textContent) {
+          errorMsg = errorElement.textContent.trim();
+        } else if (html.includes('Algo salió mal')) {
+          const match = html.match(/<h1[^>]*>([^<]+)<\/h1>/);
+          errorMsg = 'Error: ' + (match?.[1] || 'Algo salió mal');
+        }
         this.showErrorMessage(form, errorMsg);
         submitButton.disabled = false;
         submitButton.textContent = form.dataset.originalButtonText || originalText;
