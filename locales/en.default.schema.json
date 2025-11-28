@@ -104,6 +104,7 @@
     // Footer component section header for legal policy links
     "policies": "Policies",
     "popup": "Popup",
+    "popup_delay": "Popup delay (seconds)",
     "product_media": "Product media",
     "product_page": "Product page",
     "responsive_font_sizes": "Sizes automatically scale for all screen sizes",
@@ -470,6 +471,7 @@
     "cover": "Cover",
     "crop_to_fit": "Crop to fit",
     "custom": "Custom",
+    "custom_image": "Custom image",
     // Icon option representing dairy products
     "dairy": "Dairy",
     // Icon option for dietary restriction indication
@@ -613,6 +615,7 @@
     "portrait": "Portrait",
     "pretty": "Pretty",
     "preview": "Preview",
+    "predefined_icon": "Predefined icon",
     "price": "Price",
     "price_tag": "Price tag",
     "primary": "Primary",
@@ -869,12 +872,16 @@
     "hover_text": "Hover text",
     "icon": "Icon",
     "icon_background": "Icon background",
+    "icon_horizontal_position": "Icon horizontal position",
+    "icon_source": "Icon source",
+    "icon_vertical_alignment": "Icon vertical alignment",
     "icons": "Icons",
     "image": "Image",
     "image_border_radius": "Image corner radius",
     "image_gap": "Image gap",
     // Image picker setting to upload custom image as icon
     "image_icon": "Image icon",
+    "custom_icon_image": "Custom icon image",
     "image_opacity": "Image opacity",
     "image_position": "Image position",
     "image_ratio": "Image ratio",
@@ -1153,6 +1160,7 @@
     "welcome_to_our_store": "Welcome to our store",
     "what_is_return_policy": "What is the return policy?",
     "when_will_order_arrive": "When will I get my order?",
-    "where_are_products_made": "Where are your products manufactured?"
+    "where_are_products_made": "Where are your products manufactured?",
+    "faq": "FAQ"
   }
 }

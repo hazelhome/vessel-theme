@@ -1,0 +1,697 @@
+<script
+  src="{{ 'dialog.js' | asset_url }}"
+  type="module"
+></script>
+
+{% liquid
+  assign success_message = settings.subscription_popup_success_message | default: '¡Gracias por suscribirte!'
+  if settings.subscription_popup_discount_code != blank and success_message contains '{{discount_code}}'
+    assign success_message = success_message | replace: '{{discount_code}}', settings.subscription_popup_discount_code
+  endif
+%}
+<subscription-popup
+  id="subscription-popup"
+  class="subscription-popup"
+  {% if form.posted_successfully? %}
+    data-form-success="true"
+  {% endif %}
+  {% if settings.subscription_popup_discount_url != blank %}
+    data-discount-url="{{ settings.subscription_popup_discount_url }}"
+  {% endif %}
+  {% if settings.subscription_popup_discount_code != blank %}
+    data-discount-code="{{ settings.subscription_popup_discount_code }}"
+  {% endif %}
+  data-success-message="{{ success_message }}"
+  data-popup-delay="{{ settings.subscription_popup_delay | default: 1 | times: 1000 }}"
+>
+  <dialog
+    ref="dialog"
+    on:click="/closeDialogOnClickOutside"
+    class="subscription-popup__dialog dialog-modal color-{{ settings.popover_color_scheme }}"
+    scroll-lock
+    aria-labelledby="subscription-popup-heading"
+  >
+    <h2
+      id="subscription-popup-heading"
+      class="visually-hidden"
+    >
+      {{ 'blocks.email_signup.label' | t }}
+    </h2>
+
+    <button
+      ref="closeButton"
+      on:click="/closeDialog"
+      class="button button-unstyled subscription-popup__close"
+      aria-label="{{ 'accessibility.close_dialog' | t }}"
+    >
+      {{- 'icon-close.svg' | inline_asset_content -}}
+    </button>
+
+    {% liquid
+      assign image_position = settings.subscription_popup_image_position | default: 'right'
+      assign image_ratio = settings.subscription_popup_image_ratio | default: 'adapt'
+      assign image_size = settings.subscription_popup_image_size | default: 50
+      assign form_size = 100 | minus: image_size
+      assign icon_source = settings.subscription_popup_icon_type | default: 'predefined'
+      assign icon_type = settings.subscription_popup_icon | default: 'gift'
+      assign icon_horizontal = settings.subscription_popup_icon_horizontal | default: 'left'
+      assign icon_vertical = settings.subscription_popup_icon_vertical | default: 'center'
+      
+      assign desktop_image = settings.subscription_popup_image
+    %}
+    <div class="subscription-popup__content subscription-popup__content--image-{{ image_position }}" style="--image-column-width: {{ image_size }}%; --form-column-width: {{ form_size }}%;">
+      {% comment %} Mobile images always first {% endcomment %}
+      {% if settings.subscription_popup_image_mobile != blank %}
+        <div class="subscription-popup__image-wrapper subscription-popup__image-wrapper--mobile">
+          {% render 'subscription-popup-image', image: settings.subscription_popup_image_mobile, image_ratio: image_ratio, alt_text: settings.subscription_popup_heading %}
+        </div>
+      {% elsif desktop_image != blank %}
+        <div class="subscription-popup__image-wrapper subscription-popup__image-wrapper--mobile">
+          {% render 'subscription-popup-image', image: desktop_image, image_ratio: image_ratio, alt_text: settings.subscription_popup_heading %}
+        </div>
+      {% endif %}
+
+      {% comment %} Desktop: Image left - Show image first, then form {% endcomment %}
+      {% if image_position == 'left' and desktop_image != blank %}
+        <div class="subscription-popup__image-wrapper subscription-popup__image-wrapper--desktop">
+          {% render 'subscription-popup-image', image: desktop_image, image_ratio: image_ratio, alt_text: settings.subscription_popup_heading %}
+        </div>
+      {% endif %}
+
+      {% comment %} Form wrapper {% endcomment %}
+      <div class="subscription-popup__form-wrapper">
+        {% liquid
+          assign discount_percent = settings.subscription_popup_discount_percent | default: 10
+          assign heading_text = settings.subscription_popup_heading
+          if heading_text contains '{{discount}}'
+            assign heading_text = heading_text | replace: '{{discount}}', discount_percent
+          endif
+          assign heading_class = 'subscription-popup__heading'
+          if icon_source != 'none'
+            assign heading_class = heading_class | append: ' subscription-popup__heading--icon-' | append: icon_horizontal
+            assign heading_class = heading_class | append: ' subscription-popup__heading--icon-align-' | append: icon_vertical
+          endif
+        %}
+
+        {% if settings.subscription_popup_heading != blank %}
+          <h3 class="{{ heading_class }}">
+            {% if icon_source != 'none' and icon_horizontal == 'left' %}
+              <span class="subscription-popup__heading-icon">
+                {% if icon_source == 'custom' and settings.subscription_popup_icon_image != blank %}
+                  {{
+                    settings.subscription_popup_icon_image
+                    | image_url: width: 48
+                    | image_tag: loading: 'lazy', alt: '', class: 'subscription-popup__heading-icon-image'
+                  }}
+                {% elsif icon_source == 'predefined' %}
+                  {% render 'subscription-popup-icon', icon_type: icon_type %}
+                {% endif %}
+              </span>
+            {% endif %}
+            {{ heading_text }}
+            {% if icon_source != 'none' and icon_horizontal == 'right' %}
+              <span class="subscription-popup__heading-icon">
+                {% if icon_source == 'custom' and settings.subscription_popup_icon_image != blank %}
+                  {{
+                    settings.subscription_popup_icon_image
+                    | image_url: width: 48
+                    | image_tag: loading: 'lazy', alt: '', class: 'subscription-popup__heading-icon-image'
+                  }}
+                {% elsif icon_source == 'predefined' %}
+                  {% render 'subscription-popup-icon', icon_type: icon_type %}
+                {% endif %}
+              </span>
+            {% endif %}
+          </h3>
+        {% endif %}
+
+        {% if settings.subscription_popup_subheading != blank %}
+          <p class="subscription-popup__subheading">
+            {{ settings.subscription_popup_subheading }}
+          </p>
+        {% endif %}
+
+        {%- form 'customer', id: 'SubscriptionPopupForm', class: 'subscription-popup__form' -%}
+          <div class="subscription-popup__form-inputs">
+            <input
+              type="hidden"
+              name="contact[accepts_marketing]"
+              value="true"
+            >
+
+            <label
+              for="SubscriptionPopupEmail"
+              class="visually-hidden"
+            >
+              {{ 'blocks.email_signup.label' | t }}
+            </label>
+
+            <input
+              id="SubscriptionPopupEmail"
+              class="subscription-popup__input"
+              type="email"
+              name="contact[email]"
+              autocorrect="off"
+              autocapitalize="off"
+              autocomplete="email"
+              placeholder="{{ 'blocks.email_signup.placeholder' | t }}"
+              required
+              {% if form.errors %}
+                autofocus
+                aria-invalid="true"
+                aria-describedby="SubscriptionPopup-error"
+              {% endif %}
+            >
+
+            <button
+              type="submit"
+              class="subscription-popup__submit button"
+            >
+              {% if settings.subscription_popup_button_text != blank %}
+                {{ settings.subscription_popup_button_text }}
+              {% else %}
+                {{ 'blocks.email_signup.label' | t }}
+              {% endif %}
+            </button>
+          </div>
+
+          {% if settings.subscription_popup_disclaimer_1 != blank or settings.subscription_popup_disclaimer_2 != blank %}
+            <div class="subscription-popup__disclaimers">
+              {% if settings.subscription_popup_disclaimer_1 != blank %}
+                <p class="subscription-popup__disclaimer">{{ settings.subscription_popup_disclaimer_1 }}</p>
+              {% endif %}
+              {% if settings.subscription_popup_disclaimer_2 != blank %}
+                <p class="subscription-popup__disclaimer">{{ settings.subscription_popup_disclaimer_2 }}</p>
+              {% endif %}
+            </div>
+          {% endif %}
+
+        {%- if form.errors -%}
+          <div
+            id="SubscriptionPopup-error"
+            class="subscription-popup__message subscription-popup__message--error"
+            tabindex="-1"
+          >
+            <svg
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+              focusable="false"
+              aria-hidden="true"
+              class="icon-error"
+            >
+              {%- render 'icon', icon: 'error' -%}
+            </svg>
+            {{- form.errors.translated_fields.email | capitalize }}
+            {{ form.errors.messages.email -}}
+          </div>
+        {%- endif -%}
+
+        {%- if form.posted_successfully? -%}
+          <div
+            class="subscription-popup__message subscription-popup__message--success"
+            tabindex="-1"
+          >
+            <span class="svg-wrapper icon-success">
+              {{ 'icon-checkmark.svg' | inline_asset_content }}
+            </span>
+            <div class="subscription-popup__success-content">
+              {% if settings.subscription_popup_success_message != blank %}
+                {% liquid
+                  assign success_message = settings.subscription_popup_success_message
+                  if settings.subscription_popup_discount_code != blank and success_message contains '{{discount_code}}'
+                    assign success_message = success_message | replace: '{{discount_code}}', settings.subscription_popup_discount_code
+                  endif
+                %}
+                <p class="subscription-popup__message-text">{{ success_message }}</p>
+              {% else %}
+                <p class="subscription-popup__message-text">{{ 'blocks.email_signup.success' | t }}</p>
+              {% endif %}
+              {% if settings.subscription_popup_discount_code != blank %}
+                <div class="subscription-popup__discount-code-wrapper">
+                  <p class="subscription-popup__discount-label">Tu código de descuento:</p>
+                  <copy-to-clipboard-component
+                    class="subscription-popup__discount-code"
+                    text-to-copy="{{ settings.subscription_popup_discount_code }}"
+                  >
+                    <span class="subscription-popup__discount-code-text">{{ settings.subscription_popup_discount_code }}</span>
+                    <button
+                      type="button"
+                      class="subscription-popup__copy-button"
+                      on:click="/copyToClipboard"
+                      aria-label="Copiar código de descuento"
+                    >
+                      Copiar
+                    </button>
+                    <span
+                      class="subscription-popup__copy-success visually-hidden"
+                      ref="copySuccessMessage"
+                      role="status"
+                    >
+                      ¡Copiado!
+                    </span>
+                  </copy-to-clipboard-component>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {%- endif -%}
+        {%- endform -%}
+      </div>
+
+      {% comment %} Desktop: Image right - Show image after form {% endcomment %}
+      {% if image_position == 'right' and desktop_image != blank %}
+        <div class="subscription-popup__image-wrapper subscription-popup__image-wrapper--desktop">
+          {% render 'subscription-popup-image', image: desktop_image, image_ratio: image_ratio, alt_text: settings.subscription_popup_heading %}
+        </div>
+      {% endif %}
+    </div>
+  </dialog>
+</subscription-popup>
+
+<script
+  src="{{ 'subscription-popup.js' | asset_url }}"
+  type="module"
+  defer
+></script>
+<script
+  src="{{ 'copy-to-clipboard.js' | asset_url }}"
+  type="module"
+></script>
+
+{% stylesheet %}
+  .subscription-popup {
+    display: block;
+  }
+
+  .subscription-popup__dialog {
+    padding: 0;
+    border: var(--style-border-popover);
+    border-radius: var(--style-border-radius-popover);
+    box-shadow: var(--shadow-popover);
+    max-width: 90vw;
+    width: 100%;
+    max-width: 900px;
+    min-width: 600px;
+    margin: auto;
+    overflow: hidden;
+
+    @media screen and (max-width: 749px) {
+      max-width: calc(100vw - var(--padding-2xl));
+      width: fit-content;
+      min-width: auto;
+      border-radius: var(--style-border-radius-popover);
+      margin: auto;
+      height: fit-content;
+      max-height: calc(100dvh - var(--margin-md) * 2);
+      overflow: hidden;
+    }
+  }
+
+  .subscription-popup__dialog::backdrop {
+    background-color: rgb(var(--color-foreground-rgb) / 0.6);
+    backdrop-filter: blur(4px);
+  }
+
+  .subscription-popup__close {
+    position: absolute;
+    top: var(--margin-2xs);
+    right: var(--margin-2xs);
+    z-index: var(--layer-raised);
+    transition: transform 0.15s var(--animation-timing-bounce), background-color 0.2s ease;
+    padding: var(--padding-xs);
+    background-color: rgb(var(--color-background-rgb) / 0.9);
+    border-radius: 4px;
+    color: var(--color-foreground);
+    
+    &:hover {
+      background-color: var(--color-background);
+    }
+  }
+
+  .subscription-popup__close:active {
+    transform: scale(0.8);
+  }
+
+  .subscription-popup__content {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 500px;
+    overflow: hidden;
+
+    @media screen and (min-width: 750px) {
+      grid-template-columns: var(--form-column-width) var(--image-column-width);
+      grid-template-rows: 1fr;
+      min-height: 500px;
+      height: 500px;
+      max-height: 500px;
+    }
+
+    @media screen and (max-width: 749px) {
+      min-height: auto;
+      overflow: hidden;
+    }
+  }
+
+  .subscription-popup__content--image-left {
+    @media screen and (min-width: 750px) {
+      grid-template-columns: var(--image-column-width) var(--form-column-width);
+      
+      .subscription-popup__image-wrapper--desktop:first-child {
+        border-radius: var(--style-border-radius-popover) 0 0 var(--style-border-radius-popover);
+      }
+      
+      .subscription-popup__form-wrapper:last-child {
+        border-radius: 0 var(--style-border-radius-popover) var(--style-border-radius-popover) 0;
+      }
+    }
+  }
+
+  .subscription-popup__content--image-right {
+    @media screen and (min-width: 750px) {
+      .subscription-popup__form-wrapper:first-child {
+        border-radius: var(--style-border-radius-popover) 0 0 var(--style-border-radius-popover);
+      }
+      
+      .subscription-popup__image-wrapper--desktop:last-child {
+        border-radius: 0 var(--style-border-radius-popover) var(--style-border-radius-popover) 0;
+      }
+    }
+  }
+
+  .subscription-popup__image-wrapper {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-foreground);
+    background-image: 
+      linear-gradient(90deg, rgba(var(--color-background-rgb), 0.05) 1px, transparent 1px),
+      linear-gradient(rgba(var(--color-background-rgb), 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .subscription-popup__image-wrapper--desktop {
+    display: none;
+
+    @media screen and (min-width: 750px) {
+      display: block !important;
+      order: 0;
+      overflow: hidden;
+    }
+  }
+
+  .subscription-popup__image-wrapper--mobile {
+    display: block;
+    order: 1;
+    max-height: 35vh;
+    overflow: hidden;
+
+    @media screen and (max-width: 749px) {
+      border-radius: var(--style-border-radius-popover) var(--style-border-radius-popover) 0 0;
+    }
+
+    @media screen and (min-width: 750px) {
+      display: none !important;
+    }
+  }
+
+  .subscription-popup__form-wrapper {
+    order: 2;
+
+    @media screen and (min-width: 750px) {
+      order: unset;
+    }
+
+    @media screen and (max-width: 749px) {
+      border-radius: 0 0 var(--style-border-radius-popover) var(--style-border-radius-popover);
+      overflow: hidden;
+    }
+  }
+
+  .subscription-popup__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+  }
+
+  .subscription-popup__image[data-image-ratio="adapt"] {
+    aspect-ratio: auto;
+    height: auto;
+  }
+
+  .subscription-popup__image:not([data-image-ratio="adapt"]) {
+    aspect-ratio: var(--image-ratio, 1);
+  }
+
+  .subscription-popup__form-wrapper {
+    padding: var(--padding-4xl) var(--padding-xl) var(--padding-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--gap-lg);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+
+    @media screen and (min-width: 750px) {
+      padding: var(--padding-5xl);
+    }
+  }
+
+  .subscription-popup__heading {
+    margin: 0;
+    font-size: clamp(1.25rem, 2vw + 1rem, 1.75rem);
+    font-weight: 700;
+    line-height: 1.3;
+    display: flex;
+    gap: var(--gap-xs);
+    color: var(--color-foreground-heading, var(--color-foreground));
+  }
+
+  .subscription-popup__heading--icon-left {
+    flex-direction: row;
+  }
+
+  .subscription-popup__heading--icon-right {
+    flex-direction: row;
+  }
+
+  .subscription-popup__heading--icon-align-top {
+    align-items: flex-start;
+  }
+
+  .subscription-popup__heading--icon-align-center {
+    align-items: center;
+  }
+
+  .subscription-popup__heading--icon-align-bottom {
+    align-items: flex-end;
+  }
+
+  .subscription-popup__heading-icon {
+    display: inline-flex;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    line-height: 0;
+  }
+
+  .subscription-popup__heading-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .subscription-popup__heading-icon-image {
+    width: 24px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .subscription-popup__subheading {
+    margin: 0;
+    font-size: var(--font-size--md);
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-70));
+    font-weight: 400;
+  }
+
+  .subscription-popup__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+  }
+
+  .subscription-popup__form-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+  }
+
+  .subscription-popup__input {
+    flex: 1;
+    width: 100%;
+    padding: var(--padding-lg) var(--padding-xl);
+    border: var(--style-border-width-inputs) solid var(--color-input-border);
+    border-radius: var(--style-border-radius-inputs);
+    background-color: var(--color-input-background);
+    color: var(--color-input-text);
+    font-size: inherit;
+    line-height: inherit;
+
+    &::placeholder {
+      color: rgb(var(--color-input-text-rgb) / var(--opacity-70));
+    }
+
+    &:focus-visible {
+      outline: var(--focus-outline-width) solid var(--color-primary);
+      outline-offset: var(--focus-outline-offset);
+      border-color: var(--color-primary);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .subscription-popup__input {
+      width: 100%;
+    }
+  }
+
+  .subscription-popup__submit {
+    --button-background-color: var(--color-primary-button-background);
+    --button-color: var(--color-primary-button-text);
+    --button-border-color: var(--color-primary-button-border);
+    --button-border-width: var(--style-border-width-primary);
+    
+    width: 100%;
+    font-family: var(--button-font-family-primary);
+    text-transform: var(--button-text-case-primary);
+    background-color: var(--button-background-color);
+    color: var(--button-color);
+    border: var(--button-border-width) solid var(--button-border-color);
+    border-radius: var(--style-border-radius-buttons-primary);
+    padding-block: var(--button-padding-block);
+    padding-inline: var(--button-padding-inline);
+    cursor: pointer;
+    transition: background-color var(--animation-speed) var(--animation-easing),
+      color var(--animation-speed) var(--animation-easing),
+      box-shadow var(--animation-speed) var(--animation-easing);
+
+    &:hover {
+      --button-background-color: var(--color-primary-button-hover-background);
+      --button-color: var(--color-primary-button-hover-text);
+      --button-border-color: var(--color-primary-button-hover-border);
+      background-color: var(--button-background-color);
+      color: var(--button-color);
+    }
+  }
+
+  .subscription-popup__disclaimers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-2xs);
+    margin-top: var(--gap-sm);
+  }
+
+  .subscription-popup__disclaimer {
+    margin: 0;
+    font-size: 0.75rem;
+    color: rgb(var(--color-foreground-rgb) / var(--opacity-60));
+    line-height: 1.4;
+  }
+
+  .subscription-popup__message {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-xs);
+    padding: var(--padding-md);
+    border-radius: var(--style-border-radius-inputs);
+  }
+
+  .subscription-popup__message--error {
+    background-color: rgba(var(--color-error-rgb, 220 38 38), 0.1);
+    color: var(--color-error, rgb(220 38 38));
+  }
+
+  .subscription-popup__message--success {
+    background-color: rgba(var(--color-success-rgb, 34 197 94), 0.1);
+    color: var(--color-success, rgb(34 197 94));
+  }
+
+  .subscription-popup__message-text {
+    margin: 0;
+  }
+
+  .subscription-popup__success-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    width: 100%;
+  }
+
+  .subscription-popup__discount-code-wrapper {
+    margin-top: var(--gap-sm);
+    padding-top: var(--gap-md);
+    border-top: 1px solid rgb(var(--color-border-rgb) / var(--opacity-40));
+  }
+
+  .subscription-popup__discount-label {
+    margin: 0 0 var(--gap-xs) 0;
+    font-size: var(--font-size--sm);
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  .subscription-popup__discount-code {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm);
+    padding: var(--padding-md);
+    background-color: rgb(var(--color-background-rgb) / 0.5);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--style-border-radius-inputs);
+    position: relative;
+  }
+
+  .subscription-popup__copy-success {
+    position: absolute;
+    right: var(--padding-md);
+    font-size: var(--font-size--sm);
+    color: var(--color-success);
+    font-weight: 600;
+  }
+
+  .subscription-popup__discount-code-text {
+    flex: 1;
+    font-family: monospace;
+    font-size: var(--font-size--lg);
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.05em;
+  }
+
+  .subscription-popup__copy-button {
+    padding: var(--padding-xs) var(--padding-md);
+    background-color: var(--color-primary);
+    color: var(--color-primary-button-text, #FFFFFF);
+    border: none;
+    border-radius: 4px;
+    font-size: var(--font-size--sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: var(--color-primary-hover);
+    }
+  }
+
+  .subscription-popup__dialog[open] {
+    animation: modalSlideInTop var(--animation-speed) var(--animation-easing) forwards;
+  }
+
+  .subscription-popup__dialog.dialog-closing {
+    animation: modalSlideOutTop var(--animation-speed) var(--animation-easing) forwards;
+  }
+
+  @media screen and (max-width: 749px) {
+    .subscription-popup__dialog[open] {
+      display: block;
+    }
+  }
+{% endstylesheet %}

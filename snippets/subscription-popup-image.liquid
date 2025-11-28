@@ -1,0 +1,34 @@
+{% liquid
+  assign image_ratio = image_ratio | default: 'adapt'
+  assign image = image | default: null
+  
+  assign ratio_value = 1
+  case image_ratio
+    when 'portrait'
+      assign ratio_value = '4 / 5'
+    when 'square'
+      assign ratio_value = '1'
+    when 'landscape'
+      assign ratio_value = '16 / 9'
+    when 'adapt'
+      if image
+        assign ratio_value = image.aspect_ratio
+        if ratio_value == 0 or ratio_value == null
+          assign ratio_value = 1
+        endif
+      else
+        assign ratio_value = 1
+      endif
+  endcase
+  
+  assign image_style = ''
+  unless image_ratio == 'adapt'
+    assign image_style = '--image-ratio: ' | append: ratio_value | append: ';'
+  endunless
+  assign alt_text = alt_text | default: 'Promotional image'
+%}
+{{
+  image
+  | image_url: width: 800
+  | image_tag: loading: 'lazy', class: 'subscription-popup__image', alt: alt_text, data-image-ratio: image_ratio, style: image_style
+}}

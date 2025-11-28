@@ -2284,5 +2284,258 @@
         "default": "equal-width-buttons"
       }
     ]
+  },
+  {
+    "name": "Subscription Popup",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Display Settings"
+      },
+      {
+        "type": "range",
+        "id": "subscription_popup_delay",
+        "label": "t:settings.popup_delay",
+        "min": 0,
+        "max": 30,
+        "step": 0.5,
+        "unit": "s",
+        "default": 1,
+        "info": "Time to wait before showing the popup after page load"
+      },
+      {
+        "type": "header",
+        "content": "Discount Settings"
+      },
+      {
+        "type": "paragraph",
+        "content": "Configure the discount that subscribers will receive. You can use either a discount URL (recommended) or a discount code."
+      },
+      {
+        "type": "url",
+        "id": "subscription_popup_discount_url",
+        "label": "Discount URL (Recommended)",
+        "info": "Shareable discount link from Shopify. When you create a discount in Shopify Admin > Discounts, you can copy its shareable URL (e.g., https://yourstore.myshopify.com/discount/WELCOME10). This will automatically apply the discount and redirect users after subscription."
+      },
+      {
+        "type": "paragraph",
+        "content": "💡 <strong>How to get the discount URL:</strong> Go to <a href='/admin/discounts' target='_blank' rel='noopener'>Shopify Admin > Discounts</a>, create or open a discount, then copy the 'Shareable link' or 'Discount URL'."
+      },
+      {
+        "type": "text",
+        "id": "subscription_popup_discount_code",
+        "label": "Discount Code (Alternative)",
+        "info": "If you prefer to display the code instead of using a URL, enter the discount code here (e.g., WELCOME10). This will be shown to users for manual entry.",
+        "placeholder": "WELCOME10"
+      },
+      {
+        "type": "range",
+        "id": "subscription_popup_discount_percent",
+        "label": "Discount Percentage (for display)",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "%",
+        "default": 10,
+        "info": "Percentage to display in the heading message"
+      },
+      {
+        "type": "header",
+        "content": "Promotional Image"
+      },
+      {
+        "type": "image_picker",
+        "id": "subscription_popup_image",
+        "label": "Desktop Image",
+        "info": "Image displayed on desktop (side by side with form)"
+      },
+      {
+        "type": "image_picker",
+        "id": "subscription_popup_image_mobile",
+        "label": "Mobile Image",
+        "info": "Image displayed on mobile (above the form). If not set, desktop image will be used."
+      },
+      {
+        "type": "select",
+        "id": "subscription_popup_image_position",
+        "label": "Image Position",
+        "options": [
+          {
+            "value": "left",
+            "label": "Left"
+          },
+          {
+            "value": "right",
+            "label": "Right"
+          }
+        ],
+        "default": "right",
+        "info": "Which side of the popup should the image appear?"
+      },
+      {
+        "type": "select",
+        "id": "subscription_popup_image_ratio",
+        "label": "Image Aspect Ratio",
+        "options": [
+          {
+            "value": "adapt",
+            "label": "Auto (Keep original)"
+          },
+          {
+            "value": "portrait",
+            "label": "Portrait (4:5)"
+          },
+          {
+            "value": "square",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "landscape",
+            "label": "Landscape (16:9)"
+          }
+        ],
+        "default": "adapt"
+      },
+      {
+        "type": "range",
+        "id": "subscription_popup_image_size",
+        "label": "Image Column Width",
+        "min": 30,
+        "max": 70,
+        "step": 1,
+        "unit": "%",
+        "default": 50,
+        "info": "Percentage of popup width for image (form will take remaining space)"
+      },
+      {
+        "type": "header",
+        "content": "Heading Icon"
+      },
+      {
+        "type": "select",
+        "id": "subscription_popup_icon_type",
+        "label": "t:settings.icon_source",
+        "options": [
+          {
+            "value": "predefined",
+            "label": "t:options.predefined_icon"
+          },
+          {
+            "value": "custom",
+            "label": "t:options.custom_image"
+          },
+          {
+            "value": "none",
+            "label": "t:options.none"
+          }
+        ],
+        "default": "predefined"
+      },
+      {
+        "type": "select",
+        "id": "subscription_popup_icon",
+        "label": "t:settings.icon",
+        "options": [
+          {
+            "value": "gift",
+            "label": "Gift Box"
+          },
+          {
+            "value": "star",
+            "label": "Star"
+          }
+        ],
+        "default": "gift",
+        "visible_if": "{{ settings.subscription_popup_icon_type == 'predefined' }}"
+      },
+      {
+        "type": "image_picker",
+        "id": "subscription_popup_icon_image",
+        "label": "t:settings.custom_icon_image",
+        "info": "Upload a custom icon image (SVG or PNG recommended)",
+        "visible_if": "{{ settings.subscription_popup_icon_type == 'custom' }}"
+      },
+      {
+        "type": "select",
+        "id": "subscription_popup_icon_horizontal",
+        "label": "t:settings.icon_horizontal_position",
+        "options": [
+          {
+            "value": "left",
+            "label": "t:options.left"
+          },
+          {
+            "value": "right",
+            "label": "t:options.right"
+          }
+        ],
+        "default": "left",
+        "visible_if": "{{ settings.subscription_popup_icon_type != 'none' }}"
+      },
+      {
+        "type": "select",
+        "id": "subscription_popup_icon_vertical",
+        "label": "t:settings.icon_vertical_alignment",
+        "options": [
+          {
+            "value": "top",
+            "label": "t:options.top"
+          },
+          {
+            "value": "center",
+            "label": "t:options.center"
+          },
+          {
+            "value": "bottom",
+            "label": "t:options.bottom"
+          }
+        ],
+        "default": "center",
+        "info": "Vertical alignment of the icon relative to the text",
+        "visible_if": "{{ settings.subscription_popup_icon_type != 'none' }}"
+      },
+      {
+        "type": "header",
+        "content": "Form Content (Left Side)"
+      },
+      {
+        "type": "text",
+        "id": "subscription_popup_heading",
+        "label": "Heading",
+        "default": "Te regalamos 10% de descuento para tu compra",
+        "info": "Use {{discount}} to insert the discount percentage automatically"
+      },
+      {
+        "type": "text",
+        "id": "subscription_popup_subheading",
+        "label": "Subheading",
+        "default": "Inscríbete y obtén tu descuento"
+      },
+      {
+        "type": "text",
+        "id": "subscription_popup_button_text",
+        "label": "Button Text",
+        "default": "¡Quiero mi descuento!"
+      },
+      {
+        "type": "textarea",
+        "id": "subscription_popup_success_message",
+        "label": "Success Message",
+        "default": "¡Gracias por suscribirte!",
+        "info": "Message shown after successful subscription. Use {{discount_code}} to insert the discount code automatically."
+      },
+      {
+        "type": "text",
+        "id": "subscription_popup_disclaimer_1",
+        "label": "Disclaimer Line 1",
+        "default": "*Descuento máximo de $10.000"
+      },
+      {
+        "type": "text",
+        "id": "subscription_popup_disclaimer_2",
+        "label": "Disclaimer Line 2",
+        "default": "*Se agregará automáticamente el descuento en tu carrito"
+      }
+    ]
   }
 ]
