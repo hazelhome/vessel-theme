@@ -79,6 +79,7 @@
     "variant_button_radius": 32,
     "variant_button_width": "default-width-buttons",
     "subscription_popup_delay": 5,
+    "subscription_popup_discount_url": "https://www.hazelhome.cl/discount/HAZEL5MIL",
     "subscription_popup_discount_code": "HAZEL5MIL",
     "subscription_popup_discount_percent": 0,
     "subscription_popup_image": "shopify://shop_images/popup_1.jpg",
