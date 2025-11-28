@@ -11,6 +11,33 @@
   "type": "footer",
   "name": "t:names.footer",
   "sections": {
+    "subscription_popup_Q4diic": {
+      "type": "subscription-popup",
+      "blocks": {
+        "forms_inline_mGDrrh": {
+          "type": "shopify://apps/forms/blocks/inline/8744a304-fcb1-4347-b211-bb6b4759a76a",
+          "settings": {
+            "form_id": "756239",
+            "text_color": "#ffeecc",
+            "button_background_color": "#af480e",
+            "button_label_color": "#FFFFFF",
+            "links_color": "#af480e",
+            "errors_color": "#E02229",
+            "text_alignment": "center",
+            "form_alignment": "center",
+            "padding_top": 0,
+            "padding_bottom": 24,
+            "padding_right": 0,
+            "padding_left": 0
+          }
+        }
+      },
+      "block_order": [
+        "forms_inline_mGDrrh"
+      ],
+      "name": "Subscription Popup",
+      "settings": {}
+    },
     "footer": {
       "type": "footer",
       "blocks": {
@@ -156,6 +183,7 @@
     }
   },
   "order": [
+    "subscription_popup_Q4diic",
     "footer",
     "utilities"
   ]
