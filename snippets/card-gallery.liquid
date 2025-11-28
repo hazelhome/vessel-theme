@@ -64,7 +64,7 @@
     endif
   endif
 
-  assign all_media = product.media
+  assign all_media = product.media | where: 'media_type', 'image'
 
   # For combined listings: make sure to include the featured media of the color variants so that the swatch picker
   # works as expected.
@@ -80,11 +80,13 @@
           assign featured_media = product_option_value.variant.product.featured_media
         endif
 
-        assign existing_media = all_media | has: 'id', featured_media.id
-        unless existing_media
-          assign variant_featured_media = product_option_value.variant.product.media | where: 'id', featured_media.id
-          assign all_media = all_media | concat: variant_featured_media
-        endunless
+        if featured_media.media_type == 'image'
+          assign existing_media = all_media | has: 'id', featured_media.id
+          unless existing_media
+            assign variant_featured_media = product_option_value.variant.product.media | where: 'id', featured_media.id | where: 'media_type', 'image'
+            assign all_media = all_media | concat: variant_featured_media
+          endunless
+        endif
       endif
     endfor
   endfor
@@ -140,6 +142,10 @@
 
       capture slides
         for media in media_list_to_show
+          if media.media_type != 'image'
+            continue
+          endif
+
           assign loading = 'lazy'
           assign sizes = 'auto, ' | append: image_sizes
 

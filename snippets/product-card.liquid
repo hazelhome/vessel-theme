@@ -71,7 +71,12 @@
   if settings.transition_to_main_product
     assign featured_image = variant_to_link.featured_image
     if featured_image == blank
-      assign featured_image = product.featured_media.preview_image
+      assign image_media = product.media | where: 'media_type', 'image'
+      if image_media.size > 0
+        assign featured_image = image_media.first.preview_image
+      elsif product.featured_media.media_type == 'image'
+        assign featured_image = product.featured_media.preview_image
+      endif
     endif
 
     if featured_image != blank

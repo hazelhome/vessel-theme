@@ -48,15 +48,77 @@
     "slideshow_TT6GgC": {
       "type": "slideshow",
       "blocks": {
+        "slide_7NAW4F": {
+          "type": "_slide",
+          "settings": {
+            "media_type_1": "image",
+            "image_1": "shopify://shop_images/banners-15.jpg",
+            "custom_mobile_media": true,
+            "media_type_1_mobile": "image",
+            "image_1_mobile": "shopify://shop_images/banners-16.jpg",
+            "link": "shopify://pages/subscribir",
+            "open_in_new_tab": false,
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
         "slide_8YgJiH": {
           "type": "_slide",
           "settings": {
             "media_type_1": "image",
-            "image_1": "shopify://shop_images/banner_desktop.jpg",
+            "image_1": "shopify://shop_images/banners-13.jpg",
             "custom_mobile_media": true,
             "media_type_1_mobile": "image",
-            "image_1_mobile": "shopify://shop_images/banner_mobile.jpg",
-            "link": "shopify://collections/all",
+            "image_1_mobile": "shopify://shop_images/banners-14.jpg",
+            "link": "shopify://collections/comidas",
+            "open_in_new_tab": true,
+            "content_direction": "column",
+            "vertical_on_mobile": true,
+            "horizontal_alignment": "flex-start",
+            "vertical_alignment": "center",
+            "align_baseline": false,
+            "horizontal_alignment_flex_direction_column": "center",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 0,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "toggle_overlay": false,
+            "overlay_color": "#00000026",
+            "overlay_style": "solid",
+            "gradient_direction": "to top",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "slide_kRDUaM": {
+          "type": "_slide",
+          "settings": {
+            "media_type_1": "image",
+            "image_1": "shopify://shop_images/banners-11.jpg",
+            "custom_mobile_media": true,
+            "media_type_1_mobile": "image",
+            "image_1_mobile": "shopify://shop_images/banners-12.jpg",
+            "link": "shopify://collections/ilustracion",
             "open_in_new_tab": false,
             "content_direction": "column",
             "vertical_on_mobile": true,
@@ -81,7 +143,9 @@
         }
       },
       "block_order": [
-        "slide_8YgJiH"
+        "slide_7NAW4F",
+        "slide_8YgJiH",
+        "slide_kRDUaM"
       ],
       "name": "t:names.slideshow",
       "settings": {
@@ -110,7 +174,7 @@
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "center",
             "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 8,
+            "gap": 0,
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
@@ -221,7 +285,7 @@
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "center",
             "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 8,
+            "gap": 0,
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
@@ -332,7 +396,7 @@
             "align_baseline": false,
             "horizontal_alignment_flex_direction_column": "center",
             "vertical_alignment_flex_direction_column": "flex-start",
-            "gap": 8,
+            "gap": 0,
             "width": "fill",
             "custom_width": 100,
             "width_mobile": "fill",
@@ -463,8 +527,8 @@
         "overlay_color": "#00000026",
         "overlay_style": "solid",
         "gradient_direction": "to top",
-        "padding-block-start": 4,
-        "padding-block-end": 4
+        "padding-block-start": 16,
+        "padding-block-end": 16
       }
     },
     "product_list_x9Yaab": {
@@ -799,10 +863,10 @@
           "name": "t:names.collection_card",
           "static": true,
           "settings": {
-            "placement": "on_image",
-            "horizontal_alignment": "flex-start",
+            "placement": "below_image",
+            "horizontal_alignment": "center",
             "vertical_alignment": "flex-end",
-            "collection_card_gap": 8,
+            "collection_card_gap": 25,
             "inherit_color_scheme": true,
             "color_scheme": "",
             "border": "none",
@@ -842,7 +906,7 @@
               "name": "t:names.collection_card_image",
               "static": true,
               "settings": {
-                "image_ratio": "portrait",
+                "image_ratio": "adapt",
                 "toggle_overlay": false,
                 "overlay_color": "#00000026",
                 "overlay_style": "solid",
@@ -875,7 +939,7 @@
         "columns": 3,
         "mobile_columns": "1",
         "mobile_card_size": "60cqw",
-        "columns_gap": 8,
+        "columns_gap": 19,
         "bento_gap": 8,
         "rows_gap": 8,
         "max_collections": 4,
@@ -883,7 +947,7 @@
         "icons_shape": "none",
         "section_width": "page-width",
         "gap": 12,
-        "color_scheme": "",
+        "color_scheme": "scheme-5",
         "padding-block-start": 24,
         "padding-block-end": 24
       }
