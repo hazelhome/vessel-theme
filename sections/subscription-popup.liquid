@@ -1,0 +1,54 @@
+<div 
+  id="subscription-popup-blocks-source" 
+  class="subscription-popup-blocks-source"
+  style="display: none !important; visibility: hidden !important; position: absolute !important; left: -9999px !important;"
+>
+  {% content_for 'blocks' %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const popupContent = document.getElementById('subscription-popup-content');
+    const blocksSource = document.getElementById('subscription-popup-blocks-source');
+    
+    if (popupContent && blocksSource && blocksSource.children.length > 0) {
+      while (blocksSource.firstChild) {
+        popupContent.appendChild(blocksSource.firstChild);
+      }
+    }
+  });
+</script>
+
+{% stylesheet %}
+  .subscription-popup-blocks-source {
+    display: none !important;
+  }
+  
+  .shopify-section[data-section-type="subscription-popup"] {
+    display: none !important;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Subscription Popup",
+  "enabled_on": {
+    "groups": ["*"]
+  },
+  "blocks": [
+    {
+      "type": "@app"
+    },
+    {
+      "type": "@theme"
+    }
+  ],
+  "settings": [],
+  "presets": [
+    {
+      "name": "Subscription Popup"
+    }
+  ]
+}
+{% endschema %}
+

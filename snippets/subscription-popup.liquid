@@ -52,11 +52,6 @@
       assign image_ratio = settings.subscription_popup_image_ratio | default: 'adapt'
       assign image_size = settings.subscription_popup_image_size | default: 50
       assign form_size = 100 | minus: image_size
-      assign icon_source = settings.subscription_popup_icon_type | default: 'predefined'
-      assign icon_type = settings.subscription_popup_icon | default: 'gift'
-      assign icon_horizontal = settings.subscription_popup_icon_horizontal | default: 'left'
-      assign icon_vertical = settings.subscription_popup_icon_vertical | default: 'center'
-      
       assign desktop_image = settings.subscription_popup_image
     %}
     <div class="subscription-popup__content subscription-popup__content--image-{{ image_position }}" style="--image-column-width: {{ image_size }}%; --form-column-width: {{ form_size }}%;">
@@ -78,184 +73,8 @@
         </div>
       {% endif %}
 
-      {% comment %} Form wrapper {% endcomment %}
-      <div class="subscription-popup__form-wrapper">
-        {% liquid
-          assign discount_percent = settings.subscription_popup_discount_percent | default: 10
-          assign heading_text = settings.subscription_popup_heading
-          if heading_text contains '{{discount}}'
-            assign heading_text = heading_text | replace: '{{discount}}', discount_percent
-          endif
-          assign heading_class = 'subscription-popup__heading'
-          if icon_source != 'none'
-            assign heading_class = heading_class | append: ' subscription-popup__heading--icon-' | append: icon_horizontal
-            assign heading_class = heading_class | append: ' subscription-popup__heading--icon-align-' | append: icon_vertical
-          endif
-        %}
-
-        {% if settings.subscription_popup_heading != blank %}
-          <h3 class="{{ heading_class }}">
-            {% if icon_source != 'none' and icon_horizontal == 'left' %}
-              <span class="subscription-popup__heading-icon">
-                {% if icon_source == 'custom' and settings.subscription_popup_icon_image != blank %}
-                  {{
-                    settings.subscription_popup_icon_image
-                    | image_url: width: 48
-                    | image_tag: loading: 'lazy', alt: '', class: 'subscription-popup__heading-icon-image'
-                  }}
-                {% elsif icon_source == 'predefined' %}
-                  {% render 'subscription-popup-icon', icon_type: icon_type %}
-                {% endif %}
-              </span>
-            {% endif %}
-            {{ heading_text }}
-            {% if icon_source != 'none' and icon_horizontal == 'right' %}
-              <span class="subscription-popup__heading-icon">
-                {% if icon_source == 'custom' and settings.subscription_popup_icon_image != blank %}
-                  {{
-                    settings.subscription_popup_icon_image
-                    | image_url: width: 48
-                    | image_tag: loading: 'lazy', alt: '', class: 'subscription-popup__heading-icon-image'
-                  }}
-                {% elsif icon_source == 'predefined' %}
-                  {% render 'subscription-popup-icon', icon_type: icon_type %}
-                {% endif %}
-              </span>
-            {% endif %}
-          </h3>
-        {% endif %}
-
-        {% if settings.subscription_popup_subheading != blank %}
-          <p class="subscription-popup__subheading">
-            {{ settings.subscription_popup_subheading }}
-          </p>
-        {% endif %}
-
-        {%- form 'customer', id: 'SubscriptionPopupForm', class: 'subscription-popup__form' -%}
-          <div class="subscription-popup__form-inputs">
-            <input
-              type="hidden"
-              name="contact[accepts_marketing]"
-              value="true"
-            >
-
-            <label
-              for="SubscriptionPopupEmail"
-              class="visually-hidden"
-            >
-              {{ 'blocks.email_signup.label' | t }}
-            </label>
-
-            <input
-              id="SubscriptionPopupEmail"
-              class="subscription-popup__input"
-              type="email"
-              name="contact[email]"
-              autocorrect="off"
-              autocapitalize="off"
-              autocomplete="email"
-              placeholder="{{ 'blocks.email_signup.placeholder' | t }}"
-              required
-              {% if form.errors %}
-                autofocus
-                aria-invalid="true"
-                aria-describedby="SubscriptionPopup-error"
-              {% endif %}
-            >
-
-            <button
-              type="submit"
-              class="subscription-popup__submit button"
-            >
-              {% if settings.subscription_popup_button_text != blank %}
-                {{ settings.subscription_popup_button_text }}
-              {% else %}
-                {{ 'blocks.email_signup.label' | t }}
-              {% endif %}
-            </button>
-          </div>
-
-          {% if settings.subscription_popup_disclaimer_1 != blank or settings.subscription_popup_disclaimer_2 != blank %}
-            <div class="subscription-popup__disclaimers">
-              {% if settings.subscription_popup_disclaimer_1 != blank %}
-                <p class="subscription-popup__disclaimer">{{ settings.subscription_popup_disclaimer_1 }}</p>
-              {% endif %}
-              {% if settings.subscription_popup_disclaimer_2 != blank %}
-                <p class="subscription-popup__disclaimer">{{ settings.subscription_popup_disclaimer_2 }}</p>
-              {% endif %}
-            </div>
-          {% endif %}
-
-        {%- if form.errors -%}
-          <div
-            id="SubscriptionPopup-error"
-            class="subscription-popup__message subscription-popup__message--error"
-            tabindex="-1"
-          >
-            <svg
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-              focusable="false"
-              aria-hidden="true"
-              class="icon-error"
-            >
-              {%- render 'icon', icon: 'error' -%}
-            </svg>
-            {{- form.errors.translated_fields.email | capitalize }}
-            {{ form.errors.messages.email -}}
-          </div>
-        {%- endif -%}
-
-        {%- if form.posted_successfully? -%}
-          <div
-            class="subscription-popup__message subscription-popup__message--success"
-            tabindex="-1"
-          >
-            <span class="svg-wrapper icon-success">
-              {{ 'icon-checkmark.svg' | inline_asset_content }}
-            </span>
-            <div class="subscription-popup__success-content">
-              {% if settings.subscription_popup_success_message != blank %}
-                {% liquid
-                  assign success_message = settings.subscription_popup_success_message
-                  if settings.subscription_popup_discount_code != blank and success_message contains '{{discount_code}}'
-                    assign success_message = success_message | replace: '{{discount_code}}', settings.subscription_popup_discount_code
-                  endif
-                %}
-                <p class="subscription-popup__message-text">{{ success_message }}</p>
-              {% else %}
-                <p class="subscription-popup__message-text">{{ 'blocks.email_signup.success' | t }}</p>
-              {% endif %}
-              {% if settings.subscription_popup_discount_code != blank %}
-                <div class="subscription-popup__discount-code-wrapper">
-                  <p class="subscription-popup__discount-label">Tu código de descuento:</p>
-                  <copy-to-clipboard-component
-                    class="subscription-popup__discount-code"
-                    text-to-copy="{{ settings.subscription_popup_discount_code }}"
-                  >
-                    <span class="subscription-popup__discount-code-text">{{ settings.subscription_popup_discount_code }}</span>
-                    <button
-                      type="button"
-                      class="subscription-popup__copy-button"
-                      on:click="/copyToClipboard"
-                      aria-label="Copiar código de descuento"
-                    >
-                      Copiar
-                    </button>
-                    <span
-                      class="subscription-popup__copy-success visually-hidden"
-                      ref="copySuccessMessage"
-                      role="status"
-                    >
-                      ¡Copiado!
-                    </span>
-                  </copy-to-clipboard-component>
-                </div>
-              {% endif %}
-            </div>
-          </div>
-        {%- endif -%}
-        {%- endform -%}
+      <div class="subscription-popup__form-wrapper" id="subscription-popup-content" data-section-id="subscription-popup-content">
+        {% comment %} Los bloques se renderizan aquí desde la sección subscription-popup {% endcomment %}
       </div>
 
       {% comment %} Desktop: Image right - Show image after form {% endcomment %}
@@ -277,6 +96,31 @@
   src="{{ 'copy-to-clipboard.js' | asset_url }}"
   type="module"
 ></script>
+<script>
+  (function() {
+    function moveBlocksToPopup() {
+      const popupContent = document.getElementById('subscription-popup-content');
+      const blocksSource = document.getElementById('subscription-popup-blocks-source');
+      
+      if (popupContent && blocksSource && blocksSource.children.length > 0) {
+        while (blocksSource.firstChild) {
+          popupContent.appendChild(blocksSource.firstChild);
+        }
+      }
+    }
+    
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', moveBlocksToPopup);
+    } else {
+      moveBlocksToPopup();
+    }
+    
+    if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+      document.addEventListener('shopify:section:load', moveBlocksToPopup);
+      document.addEventListener('shopify:block:select', moveBlocksToPopup);
+    }
+  })();
+</script>
 
 {% stylesheet %}
   .subscription-popup {
@@ -416,15 +260,29 @@
 
   .subscription-popup__form-wrapper {
     order: 2;
+    padding: var(--padding-4xl) var(--padding-xl) var(--padding-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--gap-lg);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    overflow-y: auto;
+    min-height: 0;
 
     @media screen and (min-width: 750px) {
       order: unset;
+      padding: var(--padding-5xl);
     }
 
     @media screen and (max-width: 749px) {
       border-radius: 0 0 var(--style-border-radius-popover) var(--style-border-radius-popover);
       overflow: hidden;
     }
+  }
+  
+  .subscription-popup__form-wrapper > * {
+    width: 100%;
   }
 
   .subscription-popup__image {
@@ -443,19 +301,6 @@
     aspect-ratio: var(--image-ratio, 1);
   }
 
-  .subscription-popup__form-wrapper {
-    padding: var(--padding-4xl) var(--padding-xl) var(--padding-xl);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: var(--gap-lg);
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-
-    @media screen and (min-width: 750px) {
-      padding: var(--padding-5xl);
-    }
-  }
 
   .subscription-popup__heading {
     margin: 0;
