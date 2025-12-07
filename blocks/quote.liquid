@@ -1,0 +1,391 @@
+
+{% assign block_settings = block.settings %}
+{% liquid
+  assign quote_text = block_settings.quote_text
+  assign author = block_settings.author
+  assign quote_size = block_settings.quote_size | default: 40
+  assign quote_color = block_settings.quote_color | default: 'var(--color-primary)'
+  assign quote_position = block_settings.quote_position | default: 'top-left'
+  assign quote_image = block_settings.quote_image
+  assign use_custom_image = block_settings.use_custom_quote_image | default: false
+%}
+
+<blockquote
+  class="quote-block spacing-style{% if block_settings.inherit_color_scheme == false %} color-{{ block_settings.color_scheme }}{% endif %}"
+  style="{% render 'spacing-padding', settings: block_settings %}"
+  {{ block.shopify_attributes }}
+>
+  <div class="quote-block__container">
+    <div class="quote-block__quote-icon quote-block__quote-icon--{{ quote_position }}" style="--quote-size: {{ quote_size }}px; --quote-color: {{ quote_color }};">
+      {% if use_custom_image and quote_image != blank %}
+        {{
+          quote_image
+          | image_url: width: 400
+          | image_tag: loading: 'lazy', alt: '', class: 'quote-block__quote-icon-image'
+        }}
+      {% else %}
+        <svg xmlns="http://www.w3.org/2000/svg" id="Capa_1" version="1.1" viewBox="0 0 24 24" aria-hidden="true">
+          <defs>
+            <style>
+              .st0 {
+                fill-rule: evenodd;
+              }
+            </style>
+          </defs>
+          <g id="Icon">
+            <path class="st0" d="M18.62,9.42c2.35.46,4.13,2.53,4.13,5.02,0,2.82-2.29,5.11-5.11,5.11s-5.11-2.29-5.11-5.11c0-3.76,1.27-6.09,2.75-7.55,2.28-2.23,5.12-2.43,5.12-2.43.29-.02.57.13.71.38.14.25.13.57-.04.8,0,0-1.35,1.91-2.2,3.32-.09.15-.18.31-.26.46Z" fill="currentColor"/>
+            <path class="st0" d="M7.34,9.42c2.35.46,4.13,2.53,4.13,5.02,0,2.82-2.29,5.11-5.11,5.11s-5.11-2.29-5.11-5.11c0-3.76,1.27-6.09,2.75-7.55,2.27-2.23,5.12-2.43,5.12-2.43.29-.02.56.13.71.38.14.25.13.57-.04.8,0,0-1.35,1.91-2.2,3.32-.09.15-.18.31-.26.46Z" fill="currentColor"/>
+          </g>
+        </svg>
+      {% endif %}
+    </div>
+    
+    <div class="quote-block__content">
+      {% if quote_text != blank %}
+        <div class="quote-block__text {{ block_settings.text_preset }}">
+          {{ quote_text }}
+        </div>
+      {% endif %}
+      
+      {% if author != blank %}
+        <div class="quote-block__author {{ block_settings.author_preset }}">
+          — {{ author }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</blockquote>
+
+{% stylesheet %}
+  .quote-block {
+    display: flex;
+    width: 400px !important;
+    max-width: 400px !important;
+    min-width: 400px !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    white-space: normal !important;
+  }
+
+  .quote-block__container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    padding: var(--padding-lg);
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+  }
+
+  .quote-block__quote-icon {
+    position: absolute;
+    z-index: 0;
+    color: var(--quote-color);
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  .quote-block__quote-icon svg {
+    width: var(--quote-size);
+    height: var(--quote-size);
+    display: block;
+  }
+
+  .quote-block__quote-icon-image {
+    width: var(--quote-size);
+    height: var(--quote-size);
+    display: block;
+    object-fit: contain;
+    opacity: 0.15;
+  }
+
+  .quote-block__quote-icon--top-left {
+    top: 0;
+    left: 0;
+  }
+
+  .quote-block__quote-icon--top-center {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .quote-block__quote-icon--top-right {
+    top: 0;
+    right: 0;
+  }
+
+  .quote-block__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .quote-block__text {
+    margin: 0;
+    line-height: 1.6;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    width: 100%;
+    max-width: 100%;
+    white-space: normal !important;
+    box-sizing: border-box;
+  }
+
+  .quote-block__text * {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    white-space: normal !important;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .quote-block__text p {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    white-space: normal !important;
+    max-width: 100% !important;
+  }
+
+  .quote-block__author {
+    margin: 0;
+    font-style: italic;
+    opacity: 0.8;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    white-space: normal !important;
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 749px) {
+    .quote-block__container {
+      padding: var(--padding-lg);
+    }
+
+    .quote-block__quote-icon svg,
+    .quote-block__quote-icon-image {
+      width: calc(var(--quote-size) * 0.75);
+      height: calc(var(--quote-size) * 0.75);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Quote",
+  "tag": "blockquote",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "quote_text",
+      "label": "Quote Text",
+      "default": "<p>This is an amazing quote that will inspire your customers.</p>"
+    },
+    {
+      "type": "text",
+      "id": "author",
+      "label": "Author",
+      "default": "Author Name"
+    },
+    {
+      "type": "header",
+      "content": "Quote Icon"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_quote_image",
+      "label": "Use Custom Quote Image",
+      "default": false,
+      "info": "Upload your own SVG or image for the quote marks"
+    },
+    {
+      "type": "image_picker",
+      "id": "quote_image",
+      "label": "Custom Quote Image",
+      "info": "Upload a custom SVG or image for the quote marks. Recommended: SVG for best quality.",
+      "visible_if": "{{ block.settings.use_custom_quote_image }}"
+    },
+    {
+      "type": "range",
+      "id": "quote_size",
+      "label": "Quote Size",
+      "min": 40,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "quote_color",
+      "label": "Quote Color",
+      "default": "#000000",
+      "info": "Only applies to default SVG, not custom images"
+    },
+    {
+      "type": "select",
+      "id": "quote_position",
+      "label": "Quote Position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "Top Left"
+        },
+        {
+          "value": "top-center",
+          "label": "Top Center"
+        },
+        {
+          "value": "top-right",
+          "label": "Top Right"
+        }
+      ],
+      "default": "top-left"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "select",
+      "id": "text_preset",
+      "label": "Text Preset",
+      "options": [
+        {
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "paragraph",
+          "label": "Paragraph"
+        },
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        }
+      ],
+      "default": "paragraph",
+      "info": "Edit presets in theme settings"
+    },
+    {
+      "type": "select",
+      "id": "author_preset",
+      "label": "Author Preset",
+      "options": [
+        {
+          "value": "",
+          "label": "Default"
+        },
+        {
+          "value": "paragraph",
+          "label": "Paragraph"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        }
+      ],
+      "default": "paragraph",
+      "info": "Edit presets in theme settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "inherit_color_scheme",
+      "label": "Inherit color scheme",
+      "default": true
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1",
+      "visible_if": "{{ block.settings.inherit_color_scheme == false }}"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-start",
+      "label": "Left",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding-inline-end",
+      "label": "Right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quote"
+    }
+  ]
+}
+{% endschema %}
+

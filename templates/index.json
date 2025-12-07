@@ -1272,6 +1272,61 @@
         "padding-block-start": 48,
         "padding-block-end": 48
       }
+    },
+    "quotes_marquee_ABC123": {
+      "type": "quotes-marquee",
+      "blocks": {
+        "quote_1": {
+          "type": "quote",
+          "settings": {
+            "quote_text": "<p>This is an amazing quote that will inspire your customers and showcase your brand values.</p>",
+            "author": "Customer Name",
+            "quote_size": 40,
+            "quote_color": "#000000",
+            "quote_position": "top-left",
+            "text_preset": "paragraph",
+            "author_preset": "paragraph",
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          }
+        },
+        "quote_2": {
+          "type": "quote",
+          "settings": {
+            "quote_text": "<p>Another wonderful testimonial that highlights the quality and excellence of your products or services.</p>",
+            "author": "Another Customer",
+            "quote_size": 40,
+            "quote_color": "#000000",
+            "quote_position": "top-left",
+            "text_preset": "paragraph",
+            "author_preset": "paragraph",
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          }
+        }
+      },
+      "block_order": [
+        "quote_1",
+        "quote_2"
+      ],
+      "name": "Quotes Marquee",
+      "settings": {
+        "enable_auto_scroll": true,
+        "scroll_speed": 30,
+        "movement_direction": "normal",
+        "gap_between_elements": 40,
+        "color_scheme": "scheme-1",
+        "padding-block-start": 40,
+        "padding-block-end": 40
+      }
     }
   },
   "order": [
@@ -1282,6 +1337,7 @@
     "featured_product_yEF9dK",
     "collection_list_Bm7g9K",
     "featured_product_kAzr6f",
-    "product_list_nQbyNK"
+    "product_list_nQbyNK",
+    "quotes_marquee_ABC123"
   ]
 }
