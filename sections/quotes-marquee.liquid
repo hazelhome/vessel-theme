@@ -15,10 +15,21 @@
   elsif speed_factor > 100
     assign speed_factor = 100
   endif
+  assign heading = section.settings.heading
+  assign heading_alignment = section.settings.heading_alignment | default: 'center'
+  assign heading_preset = section.settings.heading_preset | default: 'h2'
 %}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<marquee-component
+<div class="quotes-marquee-section spacing-style color-{{ section.settings.color_scheme }}">
+  {% if heading != blank %}
+    <div class="quotes-marquee-section__heading" style="text-align: {{ heading_alignment }};">
+      <div class="quotes-marquee-section__heading-text {{ heading_preset }}">
+        {{ heading }}
+      </div>
+    </div>
+  {% endif %}
+  <marquee-component
   class="section spacing-style gap-style color-{{ section.settings.color_scheme }}"
   style="
     {%- render 'spacing-style', settings: section.settings %};
@@ -48,8 +59,23 @@
     </div>
   </div>
 </marquee-component>
+</div>
 
 {% stylesheet %}
+  .quotes-marquee-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-xl);
+  }
+
+  .quotes-marquee-section__heading {
+    width: 100%;
+  }
+
+  .quotes-marquee-section__heading-text {
+    margin: 0;
+  }
+
   marquee-component {
     display: block;
     width: 100%;
@@ -116,6 +142,72 @@
     }
   ],
   "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<h2>What Our Customers Say</h2>"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "heading_preset",
+      "label": "Heading Preset",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        },
+        {
+          "value": "paragraph",
+          "label": "Paragraph"
+        }
+      ],
+      "default": "h2"
+    },
     {
       "type": "header",
       "content": "Auto Scroll"
