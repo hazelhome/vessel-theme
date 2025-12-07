@@ -108,12 +108,36 @@
             "padding-inline-end": 0
           },
           "blocks": {}
+        },
+        "payment_icons_Twrd3D": {
+          "type": "payment-icons",
+          "name": "t:names.payment_icons",
+          "settings": {
+            "horizontal_alignment": "flex-start",
+            "gap": 10,
+            "custom_payment_1": "shopify://shop_images/MercadoPago-Logo-Vector_svg.png",
+            "custom_payment_1_alt": "MercadoPago",
+            "custom_payment_1_width": 195,
+            "custom_payment_2": "shopify://shop_images/48cda8ae58599e9dea2be9d308c648198a18870cedabc07413225fb927aa4ddd-small-logo_green-h400.png",
+            "custom_payment_2_alt": "Venti",
+            "custom_payment_2_width": 195,
+            "custom_payment_3_alt": "Payment method",
+            "custom_payment_3_width": 60,
+            "visa_width": 60,
+            "mastercard_width": 60,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "menu_hBUfAA",
         "menu_xAiPD3",
-        "email_signup_YEP4UY"
+        "email_signup_YEP4UY",
+        "payment_icons_Twrd3D"
       ],
       "name": "t:names.footer",
       "settings": {
@@ -165,30 +189,12 @@
             "custom_url": ""
           },
           "blocks": {}
-        },
-        "payment_icons_footer": {
-          "type": "payment-icons",
-          "name": "Payment Methods",
-          "settings": {
-            "horizontal_alignment": "center",
-            "gap": 12,
-            "icon_width": 60,
-            "custom_payment_1_alt": "MercadoPago",
-            "custom_payment_2_alt": "Vanti",
-            "custom_payment_3_alt": "Payment method",
-            "padding-block-start": 8,
-            "padding-block-end": 8,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
         }
       },
       "block_order": [
         "footer_copyright_YdKQ3x",
         "footer_policy_list_ErQM9U",
-        "social_links_W6LiWP",
-        "payment_icons_footer"
+        "social_links_W6LiWP"
       ],
       "settings": {
         "section_width": "page-width",
