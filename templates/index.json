@@ -897,6 +897,9 @@
       ],
       "name": "Quotes Marquee",
       "settings": {
+        "heading": "<h3>Lo que dicen nuestros Clientes</h3>",
+        "heading_alignment": "center",
+        "heading_preset": "h2",
         "enable_auto_scroll": true,
         "scroll_speed": 60,
         "movement_direction": "normal",
