@@ -1,0 +1,339 @@
+
+<script
+  src="{{ 'marquee.js' | asset_url }}"
+  type="module"
+  fetchpriority="low"
+></script>
+
+{% liquid
+  assign gap_between_elements = section.settings.gap_between_elements
+  assign enable_auto_scroll = section.settings.enable_auto_scroll | default: true
+  assign scroll_speed = section.settings.scroll_speed | default: 30
+  assign speed_factor = scroll_speed | divided_by: 1.2 | round
+  if speed_factor < 5
+    assign speed_factor = 5
+  elsif speed_factor > 100
+    assign speed_factor = 100
+  endif
+  assign heading = section.settings.heading
+  assign heading_alignment = section.settings.heading_alignment | default: 'center'
+  assign heading_preset = section.settings.heading_preset | default: 'h2'
+%}
+
+<div class="section-background color-{{ section.settings.color_scheme }}"></div>
+<div class="quotes-marquee-section color-{{ section.settings.color_scheme }}">
+  {% if heading != blank %}
+    <div class="quotes-marquee-section__heading" style="text-align: {{ heading_alignment }};">
+      <div class="quotes-marquee-section__heading-text {{ heading_preset }}">
+        {{ heading }}
+      </div>
+    </div>
+  {% endif %}
+  <div class="quotes-marquee-section__marquee-wrapper spacing-style">
+    <marquee-component
+  class="section gap-style color-{{ section.settings.color_scheme }}"
+  style="
+    {%- render 'spacing-style', settings: section.settings %};
+    {% render 'gap-style', value: gap_between_elements, name: 'marquee-gap' %}
+    --marquee-direction: {{ section.settings.movement_direction }};
+  "
+  data-speed-factor="{{ speed_factor }}"
+  data-movement-direction="{{ section.settings.movement_direction }}"
+  {% unless enable_auto_scroll %}
+    data-disabled
+  {% endunless %}
+>
+  <div
+    class="marquee__wrapper"
+    ref="wrapper"
+  >
+    <div
+      class="marquee__content"
+      ref="content"
+    >
+      <div
+        class="marquee__repeated-items"
+        ref="marqueeItems[]"
+      >
+        {% content_for 'blocks' %}
+      </div>
+    </div>
+  </div>
+</marquee-component>
+  </div>
+</div>
+
+{% stylesheet %}
+  .quotes-marquee-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quotes-marquee-section__heading {
+    width: 100%;
+    margin-bottom: var(--margin-xl);
+    padding-top: 0;
+  }
+
+  .quotes-marquee-section__heading-text {
+    margin: 0;
+  }
+
+  .quotes-marquee-section__marquee-wrapper {
+    width: 100%;
+  }
+
+  marquee-component {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marquee__wrapper {
+    display: flex;
+    gap: var(--marquee-gap);
+    width: fit-content;
+  }
+
+  .marquee__content {
+    display: flex;
+    gap: var(--marquee-gap);
+  }
+
+  .marquee__content :is(p, h1, h2, h3, h4, h5, h6) {
+    white-space: normal !important;
+  }
+
+  .marquee__repeated-items {
+    display: flex;
+    gap: var(--marquee-gap);
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  .marquee__repeated-items > * {
+    align-content: flex-start;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    white-space: normal !important;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    marquee-component:not([data-disabled]) .marquee__wrapper {
+      animation: marquee-motion var(--marquee-speed) linear infinite var(--marquee-direction);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    marquee-component .marquee__wrapper {
+      animation: none;
+    }
+  }
+
+  @keyframes marquee-motion {
+    to {
+      transform: translate3d(calc(-50% - (var(--marquee-gap) / 2)), 0, 0);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Quotes Marquee",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "blocks": [
+    {
+      "type": "quote"
+    }
+  ],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<h2>What Our Customers Say</h2>"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "heading_preset",
+      "label": "Heading Preset",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        },
+        {
+          "value": "paragraph",
+          "label": "Paragraph"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "header",
+      "content": "Auto Scroll"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_auto_scroll",
+      "label": "Enable Auto Scroll",
+      "default": true,
+      "info": "Scroll will pause when hovering over the marquee"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "label": "Scroll Speed",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "s",
+      "default": 30,
+      "info": "Lower values = faster scroll. Scroll pauses on hover.",
+      "visible_if": "{{ section.settings.enable_auto_scroll }}"
+    },
+    {
+      "type": "select",
+      "id": "movement_direction",
+      "label": "Movement Direction",
+      "options": [
+        {
+          "value": "normal",
+          "label": "Left to Right"
+        },
+        {
+          "value": "reverse",
+          "label": "Right to Left"
+        }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "gap_between_elements",
+      "label": "Gap Between Quotes",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Top",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Bottom",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    }
+  ],
+  "presets": [
+    {
+      "name": "Quotes Marquee",
+      "category": "Text",
+      "blocks": {
+        "quote_1": {
+          "type": "quote",
+          "settings": {
+            "quote_text": "<p>This is an amazing quote that will inspire your customers and showcase your brand values.</p>",
+            "author": "Customer Name",
+            "quote_size": 80,
+            "quote_color": "#000000",
+            "quote_position": "top-left"
+          }
+        },
+        "quote_2": {
+          "type": "quote",
+          "settings": {
+            "quote_text": "<p>Another wonderful testimonial that highlights the quality and excellence of your products or services.</p>",
+            "author": "Another Customer",
+            "quote_size": 80,
+            "quote_color": "#000000",
+            "quote_position": "top-left"
+          }
+        }
+      },
+      "block_order": ["quote_1", "quote_2"],
+      "settings": {
+        "enable_auto_scroll": true,
+        "scroll_speed": 30,
+        "movement_direction": "normal",
+        "gap_between_elements": 40
+      }
+    }
+  ]
+}
+{% endschema %}
+
