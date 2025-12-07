@@ -165,12 +165,30 @@
             "custom_url": ""
           },
           "blocks": {}
+        },
+        "payment_icons_footer": {
+          "type": "payment-icons",
+          "name": "Payment Methods",
+          "settings": {
+            "horizontal_alignment": "center",
+            "gap": 12,
+            "icon_width": 60,
+            "custom_payment_1_alt": "MercadoPago",
+            "custom_payment_2_alt": "Vanti",
+            "custom_payment_3_alt": "Payment method",
+            "padding-block-start": 8,
+            "padding-block-end": 8,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "footer_copyright_YdKQ3x",
         "footer_policy_list_ErQM9U",
-        "social_links_W6LiWP"
+        "social_links_W6LiWP",
+        "payment_icons_footer"
       ],
       "settings": {
         "section_width": "page-width",

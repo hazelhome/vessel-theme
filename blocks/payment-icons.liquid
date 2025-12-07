@@ -25,6 +25,106 @@
         {{ type | payment_type_svg_tag: class: 'icon icon--full-color' }}
       </li>
     {%- endfor -%}
+    {%- if block_settings.custom_payment_1 != blank -%}
+      {% liquid
+        assign icon1_width = block_settings.custom_payment_1_width | default: 60
+      %}
+      <li class="payment-icons__item payment-icons__item--custom">
+        <img
+          src="{{ block_settings.custom_payment_1 | image_url: width: 300 }}"
+          srcset="{%- if block_settings.custom_payment_1.width >= 120 -%}{{ block_settings.custom_payment_1 | image_url: width: 120 }} 120w,{%- endif -%}
+                  {%- if block_settings.custom_payment_1.width >= 180 -%}{{ block_settings.custom_payment_1 | image_url: width: 180 }} 180w,{%- endif -%}
+                  {%- if block_settings.custom_payment_1.width >= 240 -%}{{ block_settings.custom_payment_1 | image_url: width: 240 }} 240w,{%- endif -%}
+                  {%- if block_settings.custom_payment_1.width >= 300 -%}{{ block_settings.custom_payment_1 | image_url: width: 300 }} 300w{%- endif -%}"
+          width="{{ icon1_width }}"
+          height="auto"
+          loading="lazy"
+          alt="{{ block_settings.custom_payment_1_alt | default: 'Payment method' }}"
+          class="payment-icons__custom-icon payment-icons__custom-icon--1"
+          style="width: {{ icon1_width }}px; height: auto;"
+        >
+      </li>
+    {%- endif -%}
+    {%- if block_settings.custom_payment_2 != blank -%}
+      {% liquid
+        assign icon2_width = block_settings.custom_payment_2_width | default: 60
+      %}
+      <li class="payment-icons__item payment-icons__item--custom">
+        <img
+          src="{{ block_settings.custom_payment_2 | image_url: width: 300 }}"
+          srcset="{%- if block_settings.custom_payment_2.width >= 120 -%}{{ block_settings.custom_payment_2 | image_url: width: 120 }} 120w,{%- endif -%}
+                  {%- if block_settings.custom_payment_2.width >= 180 -%}{{ block_settings.custom_payment_2 | image_url: width: 180 }} 180w,{%- endif -%}
+                  {%- if block_settings.custom_payment_2.width >= 240 -%}{{ block_settings.custom_payment_2 | image_url: width: 240 }} 240w,{%- endif -%}
+                  {%- if block_settings.custom_payment_2.width >= 300 -%}{{ block_settings.custom_payment_2 | image_url: width: 300 }} 300w{%- endif -%}"
+          width="{{ icon2_width }}"
+          height="auto"
+          loading="lazy"
+          alt="{{ block_settings.custom_payment_2_alt | default: 'Payment method' }}"
+          class="payment-icons__custom-icon payment-icons__custom-icon--2"
+          style="width: {{ icon2_width }}px; height: auto;"
+        >
+      </li>
+    {%- endif -%}
+    {%- if block_settings.custom_payment_3 != blank -%}
+      {% liquid
+        assign icon3_width = block_settings.custom_payment_3_width | default: 60
+      %}
+      <li class="payment-icons__item payment-icons__item--custom">
+        <img
+          src="{{ block_settings.custom_payment_3 | image_url: width: 300 }}"
+          srcset="{%- if block_settings.custom_payment_3.width >= 120 -%}{{ block_settings.custom_payment_3 | image_url: width: 120 }} 120w,{%- endif -%}
+                  {%- if block_settings.custom_payment_3.width >= 180 -%}{{ block_settings.custom_payment_3 | image_url: width: 180 }} 180w,{%- endif -%}
+                  {%- if block_settings.custom_payment_3.width >= 240 -%}{{ block_settings.custom_payment_3 | image_url: width: 240 }} 240w,{%- endif -%}
+                  {%- if block_settings.custom_payment_3.width >= 300 -%}{{ block_settings.custom_payment_3 | image_url: width: 300 }} 300w{%- endif -%}"
+          width="{{ icon3_width }}"
+          height="auto"
+          loading="lazy"
+          alt="{{ block_settings.custom_payment_3_alt | default: 'Payment method' }}"
+          class="payment-icons__custom-icon payment-icons__custom-icon--3"
+          style="width: {{ icon3_width }}px; height: auto;"
+        >
+      </li>
+    {%- endif -%}
+    {%- if block_settings.visa_logo != blank -%}
+      {% liquid
+        assign visa_width = block_settings.visa_width | default: 60
+      %}
+      <li class="payment-icons__item payment-icons__item--custom">
+        <img
+          src="{{ block_settings.visa_logo | image_url: width: 300 }}"
+          srcset="{%- if block_settings.visa_logo.width >= 120 -%}{{ block_settings.visa_logo | image_url: width: 120 }} 120w,{%- endif -%}
+                  {%- if block_settings.visa_logo.width >= 180 -%}{{ block_settings.visa_logo | image_url: width: 180 }} 180w,{%- endif -%}
+                  {%- if block_settings.visa_logo.width >= 240 -%}{{ block_settings.visa_logo | image_url: width: 240 }} 240w,{%- endif -%}
+                  {%- if block_settings.visa_logo.width >= 300 -%}{{ block_settings.visa_logo | image_url: width: 300 }} 300w{%- endif -%}"
+          width="{{ visa_width }}"
+          height="auto"
+          loading="lazy"
+          alt="Visa"
+          class="payment-icons__custom-icon payment-icons__custom-icon--visa"
+          style="width: {{ visa_width }}px; height: auto;"
+        >
+      </li>
+    {%- endif -%}
+    {%- if block_settings.mastercard_logo != blank -%}
+      {% liquid
+        assign mastercard_width = block_settings.mastercard_width | default: 60
+      %}
+      <li class="payment-icons__item payment-icons__item--custom">
+        <img
+          src="{{ block_settings.mastercard_logo | image_url: width: 300 }}"
+          srcset="{%- if block_settings.mastercard_logo.width >= 120 -%}{{ block_settings.mastercard_logo | image_url: width: 120 }} 120w,{%- endif -%}
+                  {%- if block_settings.mastercard_logo.width >= 180 -%}{{ block_settings.mastercard_logo | image_url: width: 180 }} 180w,{%- endif -%}
+                  {%- if block_settings.mastercard_logo.width >= 240 -%}{{ block_settings.mastercard_logo | image_url: width: 240 }} 240w,{%- endif -%}
+                  {%- if block_settings.mastercard_logo.width >= 300 -%}{{ block_settings.mastercard_logo | image_url: width: 300 }} 300w{%- endif -%}"
+          width="{{ mastercard_width }}"
+          height="auto"
+          loading="lazy"
+          alt="Mastercard"
+          class="payment-icons__custom-icon payment-icons__custom-icon--mastercard"
+          style="width: {{ mastercard_width }}px; height: auto;"
+        >
+      </li>
+    {%- endif -%}
   </ul>
 </div>
 
@@ -44,6 +144,19 @@
   }
 
   .payment-icons__item {
+    display: flex;
+    align-items: center;
+  }
+
+  .payment-icons__custom-icon {
+    height: auto;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    display: block;
+  }
+
+  .payment-icons__item--custom {
     display: flex;
     align-items: center;
   }
@@ -87,6 +200,117 @@
       "step": 1,
       "unit": "px",
       "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Custom Payment Methods"
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_payment_1",
+      "label": "Custom Payment Icon 1",
+      "info": "Upload MercadoPago or other payment method logo"
+    },
+    {
+      "type": "text",
+      "id": "custom_payment_1_alt",
+      "label": "Custom Payment 1 Alt Text",
+      "default": "MercadoPago"
+    },
+    {
+      "type": "range",
+      "id": "custom_payment_1_width",
+      "label": "Custom Payment 1 Width",
+      "min": 30,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 60,
+      "info": "Height will be auto to maintain aspect ratio"
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_payment_2",
+      "label": "Custom Payment Icon 2",
+      "info": "Upload Vanti or other payment method logo"
+    },
+    {
+      "type": "text",
+      "id": "custom_payment_2_alt",
+      "label": "Custom Payment 2 Alt Text",
+      "default": "Vanti"
+    },
+    {
+      "type": "range",
+      "id": "custom_payment_2_width",
+      "label": "Custom Payment 2 Width",
+      "min": 30,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 60,
+      "info": "Height will be auto to maintain aspect ratio"
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_payment_3",
+      "label": "Custom Payment Icon 3",
+      "info": "Upload additional payment method logo (optional)"
+    },
+    {
+      "type": "text",
+      "id": "custom_payment_3_alt",
+      "label": "Custom Payment 3 Alt Text",
+      "default": "Payment method"
+    },
+    {
+      "type": "range",
+      "id": "custom_payment_3_width",
+      "label": "Custom Payment 3 Width",
+      "min": 30,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 60,
+      "info": "Height will be auto to maintain aspect ratio"
+    },
+    {
+      "type": "header",
+      "content": "Credit Cards"
+    },
+    {
+      "type": "image_picker",
+      "id": "visa_logo",
+      "label": "Visa Logo",
+      "info": "Upload Visa logo (optional)"
+    },
+    {
+      "type": "range",
+      "id": "visa_width",
+      "label": "Visa Logo Width",
+      "min": 30,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 60,
+      "info": "Height will be auto to maintain aspect ratio"
+    },
+    {
+      "type": "image_picker",
+      "id": "mastercard_logo",
+      "label": "Mastercard Logo",
+      "info": "Upload Mastercard logo (optional)"
+    },
+    {
+      "type": "range",
+      "id": "mastercard_width",
+      "label": "Mastercard Logo Width",
+      "min": 30,
+      "max": 300,
+      "step": 5,
+      "unit": "px",
+      "default": 60,
+      "info": "Height will be auto to maintain aspect ratio"
     },
     {
       "type": "header",
