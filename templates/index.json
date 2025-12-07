@@ -1446,7 +1446,7 @@
       "name": "Quotes Marquee",
       "settings": {
         "enable_auto_scroll": true,
-        "scroll_speed": 30,
+        "scroll_speed": 60,
         "movement_direction": "normal",
         "color_scheme": "scheme-1",
         "gap_between_elements": 40,
