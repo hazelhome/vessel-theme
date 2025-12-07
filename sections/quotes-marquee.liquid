@@ -21,7 +21,7 @@
 %}
 
 <div class="section-background color-{{ section.settings.color_scheme }}"></div>
-<div class="quotes-marquee-section spacing-style color-{{ section.settings.color_scheme }}">
+<div class="quotes-marquee-section color-{{ section.settings.color_scheme }}">
   {% if heading != blank %}
     <div class="quotes-marquee-section__heading" style="text-align: {{ heading_alignment }};">
       <div class="quotes-marquee-section__heading-text {{ heading_preset }}">
@@ -29,8 +29,9 @@
       </div>
     </div>
   {% endif %}
-  <marquee-component
-  class="section spacing-style gap-style color-{{ section.settings.color_scheme }}"
+  <div class="quotes-marquee-section__marquee-wrapper spacing-style">
+    <marquee-component
+  class="section gap-style color-{{ section.settings.color_scheme }}"
   style="
     {%- render 'spacing-style', settings: section.settings %};
     {% render 'gap-style', value: gap_between_elements, name: 'marquee-gap' %}
@@ -59,21 +60,27 @@
     </div>
   </div>
 </marquee-component>
+  </div>
 </div>
 
 {% stylesheet %}
   .quotes-marquee-section {
     display: flex;
     flex-direction: column;
-    gap: var(--gap-xl);
   }
 
   .quotes-marquee-section__heading {
     width: 100%;
+    margin-bottom: var(--margin-xl);
+    padding-top: 0;
   }
 
   .quotes-marquee-section__heading-text {
     margin: 0;
+  }
+
+  .quotes-marquee-section__marquee-wrapper {
+    width: 100%;
   }
 
   marquee-component {
