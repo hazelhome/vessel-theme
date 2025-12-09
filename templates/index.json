@@ -571,7 +571,7 @@
               "type": "_product-list-text",
               "name": "t:names.collection_title",
               "settings": {
-                "text": "<h3><strong>LANZAMIENTOS DE LA SEMANA</strong></h3>",
+                "text": "<h3><strong>FAVORITOS DE REGALO</strong></h3>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -597,7 +597,7 @@
               "type": "text",
               "name": "t:names.text",
               "settings": {
-                "text": "<h3>Sé el Primero en Descubrirlos</h3>",
+                "text": "<p>Regala decoración, regala estilo.</p>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
