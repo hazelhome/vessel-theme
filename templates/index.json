@@ -50,6 +50,7 @@
       "blocks": {
         "slide_7NAW4F": {
           "type": "_slide",
+          "disabled": true,
           "settings": {
             "media_type_1": "image",
             "image_1": "shopify://shop_images/banners_navidad-19-19.jpg",
