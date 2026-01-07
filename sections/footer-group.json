@@ -11,33 +11,6 @@
   "type": "footer",
   "name": "t:names.footer",
   "sections": {
-    "subscription_popup_Q4diic": {
-      "type": "subscription-popup",
-      "blocks": {
-        "forms_inline_mGDrrh": {
-          "type": "shopify://apps/forms/blocks/inline/8744a304-fcb1-4347-b211-bb6b4759a76a",
-          "settings": {
-            "form_id": "756239",
-            "text_color": "#353a47",
-            "button_background_color": "#af480e",
-            "button_label_color": "#ffeecc",
-            "links_color": "#af480e",
-            "errors_color": "#e02229",
-            "text_alignment": "center",
-            "form_alignment": "center",
-            "padding_top": 0,
-            "padding_bottom": 24,
-            "padding_right": 0,
-            "padding_left": 0
-          }
-        }
-      },
-      "block_order": [
-        "forms_inline_mGDrrh"
-      ],
-      "name": "Subscription Popup",
-      "settings": {}
-    },
     "footer": {
       "type": "footer",
       "blocks": {
@@ -83,32 +56,6 @@
           },
           "blocks": {}
         },
-        "email_signup_YEP4UY": {
-          "type": "email-signup",
-          "name": "t:names.email_signup",
-          "settings": {
-            "width": "custom",
-            "custom_width": 100,
-            "inherit_color_scheme": false,
-            "color_scheme": "scheme-58084d4c-a86e-4d0a-855e-a0966e5043f7",
-            "heading": "No te pierdas nada",
-            "heading_preset": "h5",
-            "border_style": "all",
-            "border_width": 0,
-            "border_radius": 4,
-            "input_type_preset": "h5",
-            "style_class": "button",
-            "display_type": "text",
-            "label": "SUBSCRÍBETE",
-            "integrated_button": false,
-            "button_type_preset": "h5",
-            "padding-block-start": 0,
-            "padding-block-end": 0,
-            "padding-inline-start": 0,
-            "padding-inline-end": 0
-          },
-          "blocks": {}
-        },
         "payment_icons_Twrd3D": {
           "type": "payment-icons",
           "name": "t:names.payment_icons",
@@ -136,7 +83,6 @@
       "block_order": [
         "menu_hBUfAA",
         "menu_xAiPD3",
-        "email_signup_YEP4UY",
         "payment_icons_Twrd3D"
       ],
       "name": "t:names.footer",
@@ -207,7 +153,6 @@
     }
   },
   "order": [
-    "subscription_popup_Q4diic",
     "footer",
     "utilities"
   ]
