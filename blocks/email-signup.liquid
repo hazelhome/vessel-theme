@@ -14,9 +14,7 @@
   
   <button
     type="button"
-    on:click="#subscription-popup/showDialog"
     class="email-signup__trigger-button {{ block_settings.button_type_preset }} {{ block_settings.style_class }} {% if block_settings.inherit_color_scheme == false %}color-{{ block_settings.color_scheme }}{% endif %}"
-    aria-haspopup="dialog"
     aria-label="{{ 'blocks.email_signup.label' | t }}"
   >
     {% if block_settings.display_type == 'text' %}

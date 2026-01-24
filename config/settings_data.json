@@ -78,17 +78,6 @@
     "variant_button_border_width": 1,
     "variant_button_radius": 32,
     "variant_button_width": "default-width-buttons",
-    "subscription_popup_delay": 5,
-    "subscription_popup_discount_url": "https://www.hazelhome.cl/discount/HAZEL5MIL",
-    "subscription_popup_discount_code": "HAZEL5MIL",
-    "subscription_popup_discount_percent": 0,
-    "subscription_popup_image": "shopify://shop_images/popup_1.jpg",
-    "subscription_popup_image_position": "right",
-    "subscription_popup_image_ratio": "portrait",
-    "subscription_popup_image_size": 60,
-    "subscription_popup_icon_type": "none",
-    "subscription_popup_heading": "Te regalamos $5.000 de descuento para tu compra",
-    "subscription_popup_disclaimer_1": "*Descuento válido por compras superiores a $50.000",
     "content_for_index": [],
     "blocks": {
       "15683396631634586217": {
