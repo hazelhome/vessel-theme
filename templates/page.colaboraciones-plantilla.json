@@ -529,7 +529,7 @@
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
-            "border_radius": 0,
+            "border_radius": 4,
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
@@ -581,7 +581,7 @@
               "name": "t:names.heading",
               "settings": {
                 "text": "<h2>Colección Spring Blossom</h2>",
-                "width": "fit-content",
+                "width": "100%",
                 "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "h3",
