@@ -40,7 +40,7 @@
         "text_CM96VJ": {
           "type": "text",
           "settings": {
-            "text": "<p>Transforma tu visión en realidad un  diseño hecho a la medida y si IA</p>",
+            "text": "<p>Transforma tu visión en realidad. Un diseño hecho a la medida y sin IA</p>",
             "width": "100%",
             "max_width": "normal",
             "alignment": "left",
@@ -233,7 +233,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h3>Opción 1: <strong>personalizo </strong>y <strong>exclusivo</strong> para ti</h3>",
+                "text": "<h3>Opción 1: <strong>personalizado </strong>y <strong>exclusivo</strong> para ti</h3>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",
@@ -357,7 +357,7 @@
               "type": "text",
               "name": "t:names.description",
               "settings": {
-                "text": "<p>Hazel Home retiene los derechos del diseño. Recibirás un producto personalizado para tu uso. Sin embargo, nosotros podemos agergarlo a la tienda.</p>",
+                "text": "<p>Hazel Home retiene los derechos del diseño. Recibirás un producto personalizado para tu uso. Sin embargo, podemos agergarlo a la tienda.</p>",
                 "width": "100%",
                 "max_width": "normal",
                 "alignment": "center",
