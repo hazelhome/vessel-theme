@@ -518,17 +518,18 @@
         "image_cU8CA4": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/2026_02_25_11t_Kleki.png",
             "link": "",
             "image_ratio": "square",
-            "width": "fill",
-            "custom_width": 100,
+            "width": "custom",
+            "custom_width": 50,
             "width_mobile": "fill",
             "custom_width_mobile": 100,
             "height": "fit",
             "border": "none",
             "border_width": 1,
             "border_opacity": 100,
-            "border_radius": 0,
+            "border_radius": 12,
             "padding-block-start": 0,
             "padding-block-end": 0,
             "padding-inline-start": 0,
@@ -579,7 +580,7 @@
               "type": "text",
               "name": "t:names.heading",
               "settings": {
-                "text": "<h2>Galería de Proyectos</h2>",
+                "text": "<h2>Colección Spring Blossom</h2>",
                 "width": "fit-content",
                 "max_width": "normal",
                 "alignment": "left",
@@ -604,9 +605,9 @@
             "text_nBnqcV": {
               "type": "text",
               "settings": {
-                "text": "<p>Explora nuestra colección de proyectos personalizados realizados para clientes satisfechos. Cada proyecto es único y refleja la visión y necesidades específicas de nuestros clientes.</p>",
+                "text": "<p>Para esta colaboración de la colección <strong>Spring Blossom</strong>, nos pusimos manos a la obra con lo que <strong>@</strong><a href=\"https://www.instagram.com/javipinks/?hl=en#\" target=\"_blank\" title=\"https://www.instagram.com/javipinks/?hl=en#\"><strong>javipinks</strong></a> quería para decorar su casa. Ella nos pidió algo muy específico: mucha <strong>flor</strong>, <strong>colores pastel</strong> y que el <strong>rosado</strong> no pudiera faltar. Con eso en mente, diseñamos estos dos cuadros que traen toda la frescura de la primavera directo a sus paredes, logrando exactamente el estilo que ella estaba buscando.</p>",
                 "width": "fit-content",
-                "max_width": "narrow",
+                "max_width": "normal",
                 "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
@@ -652,7 +653,6 @@
         "image_cU8CA4",
         "group_FYtkHw"
       ],
-      "disabled": true,
       "name": "t:names.image_with_text",
       "settings": {
         "content_direction": "row",
